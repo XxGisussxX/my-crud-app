@@ -1,10 +1,13 @@
 import { getTasks, saveTasks } from "./storage.js";
 
-export function addTask(text) {
+export function addTask(taskData) {
   const tasks = getTasks();
   const newTask = {
     id: crypto.randomUUID(),
-    text,
+    text: taskData.text,
+    description: taskData.description || "",
+    priority: taskData.priority || "medium",
+    date: taskData.date || "",
     completed: false,
   };
   tasks.push(newTask);

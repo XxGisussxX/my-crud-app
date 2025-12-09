@@ -3,19 +3,206 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CRUD LocalStorage</title>
-    <link rel="stylesheet" href="./src/style.css" />
+    <title>TaskMaster - Workspace</title>
+    <link rel="stylesheet" href="./src/styles/style.css" />
   </head>
-  <body>
-    <h1>Gestor de Tareas</h1>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+        <div class="logo-icon">T</div>
+        <div class="logo-text">
+            <h2>TaskMaster</h2>
+            <p>Workspace</p>
+        </div>
+    </div>
 
-    <section class="form">
-      <input id="taskInput" type="text" placeholder="Nueva tarea" />
-      <button id="addBtn">Agregar</button>
-    </section>
+    <nav>
+        <div class="nav-item active">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+            </svg>
+            <span>My Tasks</span>
+        </div>
+        <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+            </svg>
+            <span>Calendar</span>
+        </div>
+        <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+            </svg>
+            <span>Projects</span>
+        </div>
+    </nav>
 
-    <section id="taskList"></section>
+    <div class="stats">
+        <div class="stat-card">
+            <h3>Tasks Completed</h3>
+            <div class="number" id="tasksCompleted">0 / 0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Active Tasks</h3>
+            <div class="number" id="activeTasks">0</div>
+        </div>
+    </div>
+</aside>
 
-    <script type="module" src="./src/main.js"></script>
+<!-- Main Content -->
+<main class="main-content">
+    <header class="header">
+        <div class="search-bar">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input type="text" placeholder="Search tasks...">
+        </div>
+
+        <div class="header-actions">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Active</button>
+            <button class="filter-btn">Completed</button>
+            <button class="notification-btn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20" color="white">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+            </button>
+            <button class="add-task-btn" id="addBtn">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Add New Task
+            </button>
+        </div>
+    </header>
+
+    <!-- Modal para crear nueva tarea -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nueva Tarea</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskTitle">Título de la tarea *</label>
+                    <input type="text" id="taskTitle" name="title" required placeholder="Ej: Finalize Q3 Report">
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">Descripción</label>
+                    <textarea id="taskDescription" name="description" rows="3" placeholder="Describe los detalles de la tarea..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taskPriority">Prioridad</label>
+                    <select id="taskPriority" name="priority">
+                        <option value="low">Baja</option>
+                        <option value="medium" selected>Media</option>
+                        <option value="high">Alta</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskDate">Fecha límite</label>
+                    <input type="date" id="taskDate" name="date">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn-submit">Crear Tarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="tasks-container">
+        <div class="tasks-grid" id="taskList">
+            <!-- Task 1 -->
+            <div class="task-card">
+                <div class="task-header">
+                    <span class="task-indicator high"></span>
+                    <div>
+                        <h3 class="task-title">Finalize Q3 Report</h3>
+                        <p class="task-description">Review financial data and compile the final report for the quarterly review meeting.</p>
+                    </div>
+                </div>
+                <div class="task-footer">
+                    <span class="task-date">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Oct 28, 2023
+                    </span>
+                    <span class="priority-badge high">High</span>
+                </div>
+            </div>
+
+            <!-- Task 2 -->
+            <div class="task-card">
+                <div class="task-header">
+                    <span class="task-indicator medium"></span>
+                    <div>
+                        <h3 class="task-title">Design new landing page mockups</h3>
+                        <p class="task-description">Create three different variations for the upcoming marketing campaign landing page.</p>
+                    </div>
+                </div>
+                <div class="task-footer">
+                    <span class="task-date">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Nov 05, 2023
+                    </span>
+                    <span class="priority-badge medium">Medium</span>
+                </div>
+            </div>
+
+            <!-- Task 3 -->
+            <div class="task-card completed">
+                <div class="task-header">
+                    <span class="task-indicator done"></span>
+                    <div>
+                        <h3 class="task-title">Onboard new marketing intern</h3>
+                        <p class="task-description">Prepare materials and schedule introductory meetings.</p>
+                    </div>
+                </div>
+                <div class="task-footer">
+                    <span class="task-date">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Oct 25, 2023
+                    </span>
+                    <span class="priority-badge done">Done</span>
+                </div>
+            </div>
+
+            <!-- Task 4 -->
+            <div class="task-card">
+                <div class="task-header">
+                    <span class="task-indicator low"></span>
+                    <div>
+                        <h3 class="task-title">Update project documentation</h3>
+                        <p class="task-description">Add new API endpoints to the Confluence page and clean up outdated sections.</p>
+                    </div>
+                </div>
+                <div class="task-footer">
+                    <span class="task-date">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Nov 15, 2023
+                    </span>
+                    <span class="priority-badge low">Low</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+    <script type="module" src="./src/js/main.js"></script>
   </body>
 </html>
