@@ -5,9 +5,9 @@ let calendarInstance = null;
 // Función para obtener el color según la prioridad
 function getPriorityColor(priority, completed) {
   if (completed) {
-    return "#10b981"; // Verde para completadas
+    return "#10b981"; // Verde
   }
-  
+
   switch (priority) {
     case "high":
       return "#ef4444"; // Rojo
@@ -16,7 +16,7 @@ function getPriorityColor(priority, completed) {
     case "low":
       return "#3b82f6"; // Azul
     default:
-      return "#f59e0b"; // Por defecto amarillo
+      return "#f59e0b"; // Por defecto Amarillo/Naranja
   }
 }
 
@@ -26,10 +26,9 @@ function tasksToEvents(tasks) {
     .filter((task) => task.date) // Solo tareas con fecha
     .map((task) => {
       const color = getPriorityColor(task.priority, task.completed);
-      const title = task.text.length > 20 
-        ? task.text.substring(0, 20) + "..." 
-        : task.text;
-      
+      const title =
+        task.text.length > 20 ? task.text.substring(0, 20) + "..." : task.text;
+
       return {
         id: task.id,
         title: title,
@@ -49,17 +48,18 @@ function tasksToEvents(tasks) {
 
 // Función para inicializar el calendario
 export function initCalendar() {
-  const calendarEl = document.getElementById("calendar");
-  if (!calendarEl) return;
+  const calendarEl = document.getElementById("calendario");
+  if (!calendarEl) {
+    console.error("Elemento calendario no encontrado");
+    return;
+  }
 
   // Verificar que FullCalendar esté disponible
-  // En FullCalendar v6 desde CDN, está disponible como window.FullCalendar
-  if (typeof window === "undefined" || !window.FullCalendar) {
-    console.error("FullCalendar no está disponible, reintentando...");
-    // Reintentar después de un breve delay
+  if (typeof FullCalendar === "undefined") {
+    console.error("FullCalendar no está cargado, reintentando...");
     setTimeout(() => {
       initCalendar();
-    }, 200);
+    }, 300);
     return;
   }
 
@@ -72,56 +72,70 @@ export function initCalendar() {
   const tasks = getTasks();
   const events = tasksToEvents(tasks);
 
-  calendarInstance = new window.FullCalendar.Calendar(calendarEl, {
-    initialView: "dayGridMonth",
-    locale: "en",
-    headerToolbar: {
-      left: "prev",
-      center: "title",
-      right: "next today",
-    },
-    height: "auto",
-    events: events,
-    eventDisplay: "block",
-    dayMaxEvents: true,
-    moreLinkClick: "popover",
-    eventDidMount: function (info) {
-      // Agregar punto de color según prioridad
-      const priority = info.event.extendedProps.priority;
-      const completed = info.event.extendedProps.completed;
-      const color = getPriorityColor(priority, completed);
-      
-      // Personalizar el estilo del evento
-      info.el.style.backgroundColor = color;
-      info.el.style.borderColor = color;
-      info.el.style.borderRadius = "6px";
-      info.el.style.padding = "4px 8px";
-      info.el.style.fontSize = "13px";
-      info.el.style.fontWeight = "500";
-      info.el.style.color = "#ffffff";
-      
-      // Agregar tooltip con descripción completa
-      if (info.event.extendedProps.description) {
-        info.el.setAttribute(
-          "title",
-          `${info.event.extendedProps.fullTitle}\n${info.event.extendedProps.description}`
-        );
-      }
-    },
-    datesSet: function (dateInfo) {
-      // Actualizar eventos cuando cambia el mes
-      updateCalendarEvents();
-    },
-  });
+  try {
+    calendarInstance = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth",
+      locale: "es",
+      headerToolbar: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek,listWeek",
+      },
+      buttonText: {
+        today: "Hoy",
+        month: "Mes",
+        week: "Semana",
+        list: "Lista",
+      },
+      height: "100%",
+      expandRows: true,
+      events: events,
+      eventDisplay: "block",
+      dayMaxEvents: 3,
+      moreLinkClick: "popover",
+      eventDidMount: function (info) {
+        // Agregar punto de color según prioridad
+        const priority = info.event.extendedProps.priority;
+        const completed = info.event.extendedProps.completed;
+        const color = getPriorityColor(priority, completed);
 
-  calendarInstance.render();
+        // Personalizar el estilo del evento
+        info.el.style.backgroundColor = color;
+        info.el.style.borderColor = color;
+        info.el.style.borderRadius = "6px";
+        info.el.style.padding = "4px 8px";
+        info.el.style.fontSize = "13px";
+        info.el.style.fontWeight = "500";
+        info.el.style.color = "#ffffff";
+        info.el.style.cursor = "pointer";
+
+        // Agregar tooltip con descripción completa
+        const fullTitle = info.event.extendedProps.fullTitle;
+        const description = info.event.extendedProps.description;
+        let tooltipText = fullTitle;
+        if (description) {
+          tooltipText += `\n\n${description}`;
+        }
+        info.el.setAttribute("title", tooltipText);
+      },
+      eventClick: function (info) {
+        // Opcional: agregar funcionalidad al hacer clic en un evento
+        console.log("Evento clickeado:", info.event.extendedProps);
+      },
+    });
+
+    calendarInstance.render();
+    console.log("Calendario renderizado exitosamente");
+  } catch (error) {
+    console.error("Error al inicializar calendario:", error);
+  }
 }
 
 // Función para actualizar los eventos del calendario
 export function updateCalendarEvents() {
   if (!calendarInstance) {
     // Si no hay instancia pero estamos en la sección de calendario, inicializar
-    const calendarSection = document.getElementById("calendar-section");
+    const calendarSection = document.getElementById("calendario-section");
     if (calendarSection && calendarSection.classList.contains("active")) {
       initCalendar();
     }
@@ -130,8 +144,9 @@ export function updateCalendarEvents() {
 
   const tasks = getTasks();
   const events = tasksToEvents(tasks);
-  
+
+  // Remover todos los eventos y agregar los nuevos
   calendarInstance.removeAllEvents();
   calendarInstance.addEventSource(events);
+  calendarInstance.refetchEvents();
 }
-

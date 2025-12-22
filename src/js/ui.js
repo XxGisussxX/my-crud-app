@@ -1,5 +1,7 @@
 import { toggleTask, deleteTask } from "./logic.js";
 import { getTasks } from "./storage.js";
+import { updateCharts } from "./charts.js";
+import { showConfirmation } from "./confirmation.js";
 
 // Función para actualizar las estadísticas del contador
 export function updateStats() {
@@ -25,9 +27,23 @@ export function renderTasks() {
   const list = document.getElementById("taskList");
   const tasks = getTasks();
 
+  // Determinar filtro activo (All / Active / Completed)
+  const activeFilterBtn = document.querySelector(".filter-btn.active");
+  const filter = activeFilterBtn
+    ? activeFilterBtn.textContent.trim().toLowerCase()
+    : "all";
+
+  // Aplicar filtro a las tareas antes de renderizar
+  let filteredTasks = tasks;
+  if (filter === "active") {
+    filteredTasks = tasks.filter((t) => !t.completed);
+  } else if (filter === "completed") {
+    filteredTasks = tasks.filter((t) => t.completed);
+  }
+
   list.innerHTML = "";
 
-  tasks.forEach((task) => {
+  filteredTasks.forEach((task) => {
     const taskCard = document.createElement("div");
     taskCard.className = `task-card ${task.completed ? "completed" : ""}`;
 
@@ -79,7 +95,7 @@ export function renderTasks() {
     }</span>
           <button data-id="${
             task.id
-          }" class="toggle" style="background: rgba(102, 126, 234, 0.2); border: none; color: #667eea; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px;">${
+          }" class="toggle" style="background: rgba(59, 130, 246, 0.1); border: none; color: #3b82f6; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">${
       task.completed ? "✓" : "Marcar"
     }</button>
           <button data-id="${
@@ -92,24 +108,159 @@ export function renderTasks() {
     list.appendChild(taskCard);
   });
 
-  // Delegación de eventos
-  list.addEventListener("click", (e) => {
-    const id = e.target.dataset.id;
-    if (!id) return;
+  // Delegación de eventos (añadir listener una sola vez)
+  if (!list.dataset.listenerAdded) {
+    list.addEventListener("click", (e) => {
+      const id = e.target.dataset.id;
+      if (!id) return;
 
-    if (e.target.classList.contains("toggle")) {
-      toggleTask(id);
-      renderTasks();
-      updateStats();
-    }
+      if (e.target.classList.contains("toggle")) {
+        toggleTask(id);
+        renderTasks();
+        updateStats();
+        updateCharts();
+      }
 
-    if (e.target.classList.contains("delete")) {
-      deleteTask(id);
-      renderTasks();
-      updateStats();
-    }
-  });
+      if (e.target.classList.contains("delete")) {
+        // Obtener el título de la tarea para mostrar en confirmación
+        const task = getTasks().find((t) => t.id === id);
+        const taskTitle = task ? task.text : "esta tarea";
+
+        showConfirmation({
+          title: "Eliminar tarea",
+          message: `¿Estás seguro de que deseas eliminar "${taskTitle}"?`,
+          type: "delete",
+          confirmText: "Eliminar",
+          cancelText: "Cancelar",
+          onConfirm: () => {
+            deleteTask(id);
+            renderTasks();
+            updateStats();
+            updateCharts();
+          },
+        });
+      }
+    });
+    list.dataset.listenerAdded = "true";
+  }
 
   // Actualizar estadísticas después de renderizar
   updateStats();
+}
+
+// Función para renderizar las tareas en formato de tabla
+export function renderTasksTable() {
+  const tableBody = document.getElementById("tasksTableBody");
+  const tasks = getTasks();
+
+  // Determinar filtro activo (All / Active / Completed)
+  const activeFilterBtn = document.querySelector(".filter-btn.active");
+  const filter = activeFilterBtn
+    ? activeFilterBtn.textContent.trim().toLowerCase()
+    : "all";
+
+  // Aplicar filtro a las tareas antes de renderizar
+  let filteredTasks = tasks;
+  if (filter === "active") {
+    filteredTasks = tasks.filter((t) => !t.completed);
+  } else if (filter === "completed") {
+    filteredTasks = tasks.filter((t) => t.completed);
+  }
+
+  tableBody.innerHTML = "";
+
+  if (filteredTasks.length === 0) {
+    tableBody.innerHTML = `
+      <tr>
+        <td colspan="5" style="text-align: center; padding: 40px; color: #9ca3af;">
+          No hay tareas para mostrar
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  filteredTasks.forEach((task) => {
+    const row = document.createElement("tr");
+    row.setAttribute("data-task-id", task.id);
+    if (task.completed) {
+      row.classList.add("completed");
+    }
+
+    // Formatear fecha si existe
+    let dateDisplay = "";
+    if (task.date) {
+      const date = new Date(task.date);
+      const options = { month: "short", day: "numeric" };
+      dateDisplay = date.toLocaleDateString("en-US", options) + ",";
+    }
+
+    // Mapear prioridad a clases CSS y etiquetas
+    const priorityClass = task.completed ? "done" : task.priority || "medium";
+    const priorityLabels = {
+      high: "High",
+      medium: "Medium",
+      low: "Low",
+      done: "Done",
+    };
+
+    // Determinar el indicador de título
+    let titleIndicator = "";
+    if (task.completed) {
+      titleIndicator = '<span class="table-title-indicator completed"></span>';
+    } else {
+      titleIndicator = `<span class="table-title-indicator ${priorityClass}"></span>`;
+    }
+
+    // Truncar descripción si es muy larga
+    const description = task.description || "";
+    const truncatedDescription =
+      description.length > 50
+        ? description.substring(0, 50) + "..."
+        : description;
+
+    row.innerHTML = `
+      <td>
+        <div class="table-title-cell">
+          ${titleIndicator}
+          <span class="table-title-text">${task.text}</span>
+        </div>
+      </td>
+      <td>
+        <span class="table-description">${truncatedDescription}</span>
+      </td>
+      <td>
+        <span class="table-status">${
+          task.completed ? "Completed" : "Active"
+        }</span>
+      </td>
+      <td>
+        <span class="table-priority-badge ${priorityClass}">${
+      priorityLabels[priorityClass] || "Medium"
+    }</span>
+      </td>
+      <td>
+        <span class="table-date">${dateDisplay}</span>
+      </td>
+    `;
+
+    tableBody.appendChild(row);
+  });
+
+  // Delegación de eventos para hacer clic en las filas (toggle completado)
+  if (!tableBody.dataset.listenerAdded) {
+    tableBody.addEventListener("click", (e) => {
+      const row = e.target.closest("tr[data-task-id]");
+      if (!row) return;
+
+      const taskId = row.getAttribute("data-task-id");
+      if (taskId) {
+        toggleTask(taskId);
+        renderTasksTable();
+        updateStats();
+        updateCharts();
+      }
+    });
+    tableBody.dataset.listenerAdded = "true";
+  }
 }

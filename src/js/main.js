@@ -29,38 +29,52 @@ navItems.forEach((item) => {
     if (targetSection) {
       targetSection.classList.add("active");
 
-      // Si es la sección de My Tasks, renderizar la tabla
-      if (sectionId === "my-tasks-section") {
+      // Si es la sección de Tablas, renderizar la tabla
+      if (sectionId === "tablas-section") {
         renderTasksTable();
       }
 
+      // Si es la sección de Tareas (cards), renderizar tarjetas
+      if (sectionId === "tareas-section") {
+        renderTasks();
+      }
+
       // Si es la sección de Calendar, inicializar el calendario
-      if (sectionId === "calendar-section") {
-        // Esperar un momento para que el DOM se actualice y FullCalendar se cargue
+      if (sectionId === "calendario-section") {
+        // Dar tiempo para que el DOM se actualice
         setTimeout(() => {
           initCalendar();
-        }, 200);
+        }, 100);
+      }
+
+      // Si es la sección de Dashboard, actualizar gráficas
+      if (sectionId === "dashboard-section") {
+        setTimeout(() => {
+          updateCharts();
+        }, 100);
       }
     }
   });
 });
 
-//filtrar entre estados
+// Filtrar entre estados
 const filterItems = document.querySelectorAll(".filter-btn");
 
 filterItems.forEach((item) => {
   item.addEventListener("click", () => {
-    //remover el atributo active de los button filter
+    // Remover el atributo active de los button filter
     filterItems.forEach((button) => button.classList.remove("active"));
-    //agregar clase activa al boton clickeado
+    // Agregar clase activa al boton clickeado
     item.classList.add("active");
 
     // Determinar qué sección está activa y renderizar apropiadamente
     const activeSection = document.querySelector(".section-content.active");
-    if (activeSection && activeSection.id === "my-tasks-section") {
-      renderTasksTable();
-    } else {
-      renderTasks();
+    if (activeSection) {
+      if (activeSection.id === "tablas-section") {
+        renderTasksTable();
+      } else if (activeSection.id === "tareas-section") {
+        renderTasks();
+      }
     }
   });
 });
@@ -115,20 +129,19 @@ taskForm.addEventListener("submit", (e) => {
 
   // Determinar qué sección está activa y renderizar apropiadamente
   const activeSection = document.querySelector(".section-content.active");
-  if (activeSection && activeSection.id === "my-tasks-section") {
-    renderTasksTable();
-  } else if (activeSection && activeSection.id === "calendar-section") {
-    // Si el calendario ya está inicializado, actualizar eventos
-    // Si no, inicializarlo
-    setTimeout(() => {
+  if (activeSection) {
+    if (activeSection.id === "tablas-section") {
+      renderTasksTable();
+    } else if (activeSection.id === "tareas-section") {
+      renderTasks();
+    } else if (activeSection.id === "calendario-section") {
       updateCalendarEvents();
-    }, 100);
-  } else {
-    renderTasks();
+    } else if (activeSection.id === "dashboard-section") {
+      updateCharts();
+    }
   }
 
   updateStats();
-  updateCharts();
 });
 
 // Funcionalidad del carrusel
@@ -202,21 +215,15 @@ function initCarousel() {
   observer.observe(container, { childList: true, subtree: true });
 }
 
-renderTasks();
+// Inicialización
 updateStats();
 initCarousel();
 initCharts();
 
-// Renderizar tabla si la sección My Tasks está activa al cargar
-const myTasksSection = document.getElementById("my-tasks-section");
-if (myTasksSection && myTasksSection.classList.contains("active")) {
+// Renderizar la vista activa al cargar
+const tablasSection = document.getElementById("tablas-section");
+if (tablasSection && tablasSection.classList.contains("active")) {
   renderTasksTable();
 }
 
-// Inicializar calendario si la sección Calendar está activa al cargar
-const calendarSection = document.getElementById("calendar-section");
-if (calendarSection && calendarSection.classList.contains("active")) {
-  setTimeout(() => {
-    initCalendar();
-  }, 300);
-}
+console.log("TaskMaster inicializado correctamente");

@@ -8,7 +8,9 @@ export function addTask(taskData) {
     description: taskData.description || "",
     priority: taskData.priority || "medium",
     date: taskData.date || "",
+    createdAt: new Date().toISOString().split("T")[0], // Fecha de creación
     completed: false,
+    completedAt: null, // Fecha de completado
   };
   tasks.push(newTask);
   saveTasks(tasks);
@@ -17,9 +19,19 @@ export function addTask(taskData) {
 
 export function toggleTask(id) {
   const tasks = getTasks();
-  const updated = tasks.map((t) =>
-    t.id === id ? { ...t, completed: !t.completed } : t
-  );
+  const updated = tasks.map((t) => {
+    if (t.id === id) {
+      const isCompleted = !t.completed;
+      return {
+        ...t,
+        completed: isCompleted,
+        completedAt: isCompleted
+          ? new Date().toISOString().split("T")[0]
+          : null,
+      };
+    }
+    return t;
+  });
   saveTasks(updated);
 }
 
