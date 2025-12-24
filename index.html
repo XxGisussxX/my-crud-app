@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaskMaster - Workspace</title>
+    <link rel="icon" type="image/x-icon" href="./public/favi.ico" />
     <link rel="stylesheet" href="./src/styles/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <!-- FullCalendar CSS -->
@@ -26,18 +27,7 @@
       </div>
 
       <nav>
-        <div class="nav-item active" data-section="tablas">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
-            ></path>
-          </svg>
-          <span>Tablas</span>
-        </div>
-        <div class="nav-item" data-section="tareas">
+        <div class="nav-item active" data-section="tareas">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
@@ -47,6 +37,17 @@
             ></path>
           </svg>
           <span>Tareas</span>
+        </div>
+        <div class="nav-item" data-section="tablas">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+            ></path>
+          </svg>
+          <span>Tablas</span>
         </div>
         <div class="nav-item" data-section="calendario">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,7 +109,7 @@
     </aside>
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main class="main-content" id="app-header">
       <header class="header">
         <div class="search-bar">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -119,13 +120,33 @@
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             ></path>
           </svg>
-          <input type="text" placeholder="Search tasks..." />
+          <input type="text" placeholder="Buscar tareas..." />
         </div>
 
         <div class="header-actions">
           <button class="filter-btn active">All</button>
           <button class="filter-btn">Active</button>
           <button class="filter-btn">Completed</button>
+          <button
+            class="filter-icon-btn"
+            id="filterIconBtn"
+            style="display: none"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h8"
+              ></path>
+            </svg>
+          </button>
           <button class="notification-btn">
             <svg
               fill="none"
@@ -157,7 +178,7 @@
                 d="M12 4v16m8-8H4"
               ></path>
             </svg>
-            Add New Task
+            Añadir Tarea
           </button>
         </div>
       </header>
@@ -237,8 +258,320 @@
         </div>
       </div>
 
+      <!-- Modal para seleccionar tipo de nota -->
+      <div id="noteTypeModal" class="modal">
+        <div class="modal-content note-type-modal">
+          <div class="modal-header">
+            <h2>Select Note Type</h2>
+            <p class="modal-subtitle">Choose a template to start with.</p>
+            <button class="close-modal" id="closeNoteTypeModal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="note-type-options">
+              <div class="note-type-option" data-type="standard">
+                <div class="note-type-icon">📝</div>
+                <div class="note-type-content">
+                  <h3>Standard Note</h3>
+                  <p>Basic note for general ideas</p>
+                </div>
+              </div>
+              <div class="note-type-option" data-type="checklist">
+                <div class="note-type-icon">✅</div>
+                <div class="note-type-content">
+                  <h3>Checklist</h3>
+                  <p>Track tasks with checkboxes</p>
+                </div>
+              </div>
+              <div class="note-type-option" data-type="idea">
+                <div class="note-type-icon">💡</div>
+                <div class="note-type-content">
+                  <h3>Idea / Brainstorm</h3>
+                  <p>Capture creative thinking</p>
+                </div>
+              </div>
+              <div class="note-type-option" data-type="meeting">
+                <div class="note-type-icon">🗓️</div>
+                <div class="note-type-content">
+                  <h3>Meeting Note</h3>
+                  <p>Document meeting discussions</p>
+                </div>
+              </div>
+              <div class="note-type-option" data-type="sticky">
+                <div class="note-type-icon">📌</div>
+                <div class="note-type-content">
+                  <h3>Sticky Note</h3>
+                  <p>Quick reminders and notes</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="cancel-btn" id="cancelNoteType">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modales específicos para cada tipo de nota -->
+
+      <!-- Modal Standard Note -->
+      <div id="standardNoteModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>📝 Standard Note</h2>
+            <button class="close-modal" id="closeStandardNote">&times;</button>
+          </div>
+          <form id="standardNoteForm">
+            <div class="form-group">
+              <label for="standardTitle">Title *</label>
+              <input
+                type="text"
+                id="standardTitle"
+                required
+                placeholder="Note title..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="standardContent">Content</label>
+              <textarea
+                id="standardContent"
+                rows="6"
+                placeholder="Write your note here..."
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="standardTags">Tags</label>
+              <input
+                type="text"
+                id="standardTags"
+                placeholder="personal, work, ideas..."
+              />
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelStandardNote">
+                Cancel
+              </button>
+              <button type="submit" class="btn-submit">Save Note</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Checklist -->
+      <div id="checklistModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>✅ Checklist</h2>
+            <button class="close-modal" id="closeChecklist">&times;</button>
+          </div>
+          <form id="checklistForm">
+            <div class="form-group">
+              <label for="checklistTitle">Title *</label>
+              <input
+                type="text"
+                id="checklistTitle"
+                required
+                placeholder="Checklist title..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Items</label>
+              <div id="checklistItems">
+                <div class="checklist-item">
+                  <input type="text" placeholder="First item..." required />
+                  <button type="button" class="remove-item">&times;</button>
+                </div>
+              </div>
+              <button type="button" id="addChecklistItem" class="add-item-btn">
+                + Add Item
+              </button>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelChecklist">
+                Cancel
+              </button>
+              <button type="submit" class="btn-submit">Save Checklist</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Idea/Brainstorm -->
+      <div id="ideaModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>💡 Idea / Brainstorm</h2>
+            <button class="close-modal" id="closeIdea">&times;</button>
+          </div>
+          <form id="ideaForm">
+            <div class="form-group">
+              <label for="ideaTitle">Idea Title *</label>
+              <input
+                type="text"
+                id="ideaTitle"
+                required
+                placeholder="Your big idea..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="ideaDescription">Description</label>
+              <textarea
+                id="ideaDescription"
+                rows="4"
+                placeholder="Describe your idea..."
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="ideaKeyPoints">Key Points</label>
+              <textarea
+                id="ideaKeyPoints"
+                rows="4"
+                placeholder="• Point 1
+• Point 2
+• Point 3"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="ideaPotential">Potential/Impact</label>
+              <select id="ideaPotential">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+                <option value="breakthrough">Breakthrough</option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelIdea">
+                Cancel
+              </button>
+              <button type="submit" class="btn-submit">Save Idea</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Meeting Note -->
+      <div id="meetingModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>🗓️ Meeting Note</h2>
+            <button class="close-modal" id="closeMeeting">&times;</button>
+          </div>
+          <form id="meetingForm">
+            <div class="form-group">
+              <label for="meetingTitle">Meeting Title *</label>
+              <input
+                type="text"
+                id="meetingTitle"
+                required
+                placeholder="Weekly standup, Project review..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="meetingDate">Date & Time</label>
+              <input type="datetime-local" id="meetingDate" />
+            </div>
+            <div class="form-group">
+              <label for="meetingAttendees">Attendees</label>
+              <input
+                type="text"
+                id="meetingAttendees"
+                placeholder="John, Sarah, Mike..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="meetingAgenda">Agenda/Topics</label>
+              <textarea
+                id="meetingAgenda"
+                rows="3"
+                placeholder="1. Topic 1
+2. Topic 2
+3. Topic 3"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="meetingNotes">Notes & Decisions</label>
+              <textarea
+                id="meetingNotes"
+                rows="4"
+                placeholder="Key discussion points, decisions made, action items..."
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="meetingActions">Action Items</label>
+              <textarea
+                id="meetingActions"
+                rows="3"
+                placeholder="• @John: Task 1 (Due: Date)
+• @Sarah: Task 2 (Due: Date)"
+              ></textarea>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelMeeting">
+                Cancel
+              </button>
+              <button type="submit" class="btn-submit">
+                Save Meeting Note
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Sticky Note -->
+      <div id="stickyModal" class="modal">
+        <div class="modal-content sticky-modal">
+          <div class="modal-header">
+            <h2>📌 Sticky Note</h2>
+            <button class="close-modal" id="closeSticky">&times;</button>
+          </div>
+          <form id="stickyForm">
+            <div class="form-group">
+              <label for="stickyContent">Quick Note *</label>
+              <textarea
+                id="stickyContent"
+                rows="4"
+                required
+                placeholder="Write a quick reminder or note..."
+                maxlength="200"
+              ></textarea>
+              <small class="char-counter">0 / 200 characters</small>
+            </div>
+            <div class="form-group">
+              <label for="stickyColor">Color</label>
+              <div class="color-options">
+                <input
+                  type="radio"
+                  name="stickyColor"
+                  value="yellow"
+                  id="yellow"
+                  checked
+                />
+                <label for="yellow" class="color-option yellow"></label>
+                <input type="radio" name="stickyColor" value="pink" id="pink" />
+                <label for="pink" class="color-option pink"></label>
+                <input type="radio" name="stickyColor" value="blue" id="blue" />
+                <label for="blue" class="color-option blue"></label>
+                <input
+                  type="radio"
+                  name="stickyColor"
+                  value="green"
+                  id="green"
+                />
+                <label for="green" class="color-option green"></label>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelSticky">
+                Cancel
+              </button>
+              <button type="submit" class="btn-submit">Save Sticky</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <!-- Sección Tablas (My Tasks) -->
-      <div class="section-content active" id="tablas-section">
+      <div class="section-content" id="tablas-section">
         <div class="tasks-table-container">
           <table class="tasks-table">
             <thead>
@@ -258,7 +591,7 @@
       </div>
 
       <!-- Sección Tareas (Cards) -->
-      <div class="section-content" id="tareas-section">
+      <div class="section-content active" id="tareas-section">
         <div class="tasks-container-wrapper">
           <div class="tasks-container" id="tasksContainer">
             <div class="tasks-grid" id="taskList"></div>
@@ -284,6 +617,13 @@
             <h3 class="chart-title">Distribución por Prioridad</h3>
             <canvas id="donutChart"></canvas>
           </div>
+        </div>
+      </div>
+
+      <!-- Sección Notas -->
+      <div class="section-content" id="notas-section">
+        <div class="notas-container">
+          <div class="notas-grid" id="notasGrid"></div>
         </div>
       </div>
     </main>
