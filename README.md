@@ -1,4 +1,4 @@
-# 📊 TaskFlow Dashboard - Gestor de Tareas con Estadísticas
+# 📊 TaskMasterDashboard - Gestor de Tareas con Estadísticas
 
 > Aplicación web completa para gestión de tareas con múltiples vistas, estadísticas en tiempo real y calendario integrado
 
