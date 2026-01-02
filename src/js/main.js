@@ -301,6 +301,7 @@ function updateHeader(sectionId) {
   const searchInput = document.querySelector(".search-bar input");
   const addActionBtn = document.getElementById("addBtn");
   const filterButtons = document.querySelectorAll(".filter-btn");
+  const header = document.querySelector(".header");
 
   // Resetear filtros
   filterButtons.forEach((btn) => {
@@ -308,8 +309,14 @@ function updateHeader(sectionId) {
   });
 
   switch (sectionId) {
+    case "dashboard-section":
+      // Ocultar header completo en dashboard
+      if (header) header.style.display = "none";
+      break;
+
     case "tablas-section":
     case "tareas-section":
+      if (header) header.style.display = "flex";
       if (searchInput) searchInput.placeholder = "Buscar tareas...";
       if (addActionBtn && addActionBtn.querySelector("span")) {
         addActionBtn.querySelector("span").textContent = "Añadir Tarea";
@@ -317,6 +324,7 @@ function updateHeader(sectionId) {
       break;
 
     case "calendario-section":
+      if (header) header.style.display = "flex";
       if (searchInput) searchInput.placeholder = "Buscar eventos...";
       if (addActionBtn && addActionBtn.querySelector("span")) {
         addActionBtn.querySelector("span").textContent = "Nuevo Evento";
@@ -325,6 +333,7 @@ function updateHeader(sectionId) {
       break;
 
     case "notas-section":
+      if (header) header.style.display = "flex";
       if (searchInput) searchInput.placeholder = "Buscar notas...";
       if (addActionBtn && addActionBtn.querySelector("span")) {
         addActionBtn.querySelector("span").textContent = "Nueva Nota";
@@ -333,6 +342,7 @@ function updateHeader(sectionId) {
       break;
 
     default:
+      if (header) header.style.display = "flex";
       if (searchInput) searchInput.placeholder = "Buscar...";
       if (addActionBtn && addActionBtn.querySelector("span")) {
         addActionBtn.querySelector("span").textContent = "Agregar";

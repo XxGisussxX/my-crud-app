@@ -51,6 +51,17 @@ body {
   }
 }
 
+/* Ocultar header en la sección dashboard */
+#dashboard-section.active ~ .header,
+.main-content:has(#dashboard-section.active) .header {
+  display: none;
+}
+
+/* Ajustar margen superior del dashboard sin header */
+#dashboard-section.active {
+  padding-top: 0;
+}
+
 /* Regla adicional para asegurar que hamburguesa esté oculta en desktop */
 @media (min-width: 1025px) {
   #hamburgerBtn,
