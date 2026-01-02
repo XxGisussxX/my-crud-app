@@ -16,8 +16,11 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
   </head>
   <body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
+    <!-- Overlay para cerrar drawer -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Drawer -->
+    <aside class="sidebar" id="sidebar">
       <div class="logo">
         <div class="logo-icon">J</div>
         <div class="logo-text">
@@ -96,7 +99,7 @@
         </div>
       </nav>
 
-      <div class="stats">
+      <!-- <div class="stats">
         <div class="stat-card">
           <h3>Tasks Completed</h3>
           <div class="number" id="tasksCompleted">0 / 0</div>
@@ -105,22 +108,29 @@
           <h3>Active Tasks</h3>
           <div class="number" id="activeTasks">0</div>
         </div>
-      </div>
+      </div> -->
     </aside>
 
     <!-- Main Content -->
     <main class="main-content" id="app-header">
       <header class="header">
-        <div class="search-bar">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            ></path>
-          </svg>
-          <input type="text" placeholder="Buscar tareas..." />
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburgerBtn">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+          </button>
+          <div class="search-bar">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <input type="text" placeholder="Buscar tareas..." />
+          </div>
         </div>
 
         <div class="header-actions">
@@ -147,22 +157,6 @@
               ></path>
             </svg>
           </button>
-          <button class="notification-btn">
-            <svg
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-              ></path>
-            </svg>
-          </button>
           <button class="add-task-btn" id="addBtn">
             <svg
               fill="none"
@@ -178,7 +172,7 @@
                 d="M12 4v16m8-8H4"
               ></path>
             </svg>
-            Añadir Tarea
+            <span>Añadir Tarea</span>
           </button>
         </div>
       </header>
@@ -609,6 +603,67 @@
       <!-- Sección Dashboard (Solo Gráficas) -->
       <div class="section-content" id="dashboard-section">
         <div class="charts-container">
+          <!-- Tarjetas de Estadísticas -->
+          <div class="chart-wrapper stat-wrapper">
+            <div class="stat-icon success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Total Tasks Completed</p>
+              <div class="stat-value" id="totalCompleted">142</div>
+              <div class="stat-change positive">
+                <span class="arrow">↗</span>
+                <span class="percentage">+12%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-wrapper stat-wrapper">
+            <div class="stat-icon info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12,6 12,12 16,14"></polyline>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Avg. Completion Time</p>
+              <div class="stat-value" id="avgTime">
+                2.4 <span class="unit">days</span>
+              </div>
+              <div class="stat-change negative">
+                <span class="arrow">↘</span>
+                <span class="percentage">-5%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-wrapper stat-wrapper">
+            <div class="stat-icon warning">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"
+                ></path>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Overdue Tasks</p>
+              <div class="stat-value" id="overdueTasks">3</div>
+              <div class="stat-change negative">
+                <span class="arrow">↗</span>
+                <span class="percentage">+1</span>
+              </div>
+            </div>
+          </div>
           <div class="chart-wrapper">
             <h3 class="chart-title">Evolución de Tareas</h3>
             <canvas id="lineChart"></canvas>
