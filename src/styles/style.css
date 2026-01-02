@@ -1029,8 +1029,8 @@ body {
   border-radius: 12px;
   padding: 0;
   width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
+  max-width: 450px;
+  max-height: 85vh;
   overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   border: 1px solid #e5e7eb;
@@ -1040,12 +1040,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 30px;
+  padding: 16px 20px;
   border-bottom: 1px solid #e5e7eb;
+  position: relative;
 }
 
 .modal-header h2 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: #1f2937;
   margin: 0;
@@ -1068,17 +1069,56 @@ body {
   transition: all 0.2s;
 }
 
+/* X posicionada en esquina superior derecha para modales de notas */
+#standardNoteModal .close-modal,
+#checklistModal .close-modal,
+#ideaModal .close-modal,
+#meetingModal .close-modal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 24px;
+  width: 28px;
+  height: 28px;
+  color: #9ca3af;
+}
+
+#standardNoteModal .close-modal:hover,
+#checklistModal .close-modal:hover,
+#ideaModal .close-modal:hover,
+#meetingModal .close-modal:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Ajustar header cuando X está posicionada absolutamente */
+#standardNoteModal .modal-header,
+#checklistModal .modal-header,
+#ideaModal .modal-header,
+#meetingModal .modal-header {
+  justify-content: flex-start;
+  padding-right: 50px; /* Dar espacio para la X */
+}
+
 .close-modal:hover {
   background: #f3f4f6;
   color: #1f2937;
 }
 
 #taskForm {
-  padding: 30px;
+  padding: 20px;
+}
+
+/* Estilos específicos para modales de notas */
+#standardNoteModal form,
+#checklistModal form,
+#ideaModal form,
+#meetingModal form {
+  padding: 16px 20px;
 }
 
 .form-group {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .form-group label {
@@ -1124,14 +1164,14 @@ body {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: 32px;
-  padding-top: 24px;
+  margin-top: 20px;
+  padding-top: 16px;
   border-top: 1px solid #e5e7eb;
 }
 
 .btn-cancel,
 .btn-submit {
-  padding: 12px 24px;
+  padding: 10px 20px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -1729,31 +1769,39 @@ body {
    ============================================ */
 
 .note-type-modal {
-  max-width: 500px;
-  width: 90%;
+  max-width: 450px;
+  padding: 0.75rem;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  position: relative;
 }
 
 .modal-subtitle {
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
-  margin: 4px 0 0 0;
+  margin: 0;
   font-weight: normal;
 }
 
 .note-type-options {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin: 24px 0;
+  gap: 8px;
+  margin: 16px 0 12px 0;
 }
 
 .note-type-option {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 20px;
+  gap: 12px;
+  padding: 12px 16px;
   border: 2px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: #ffffff;
@@ -1766,15 +1814,32 @@ body {
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
 }
 
+.note-type-modal .close-modal {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+
+.note-type-modal .close-modal:hover {
+  color: #374151;
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
 .note-type-icon {
-  font-size: 32px;
-  width: 50px;
-  height: 50px;
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f1f5f9;
-  border-radius: 10px;
   flex-shrink: 0;
 }
 
@@ -1880,6 +1945,33 @@ body {
   max-width: 400px;
 }
 
+/* Padding para el formulario del sticky modal */
+#stickyModal form {
+  padding: 16px 20px;
+}
+
+/* Posicionar X en esquina superior derecha */
+#stickyModal .close-modal {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 24px;
+  width: 28px;
+  height: 28px;
+  color: #9ca3af;
+}
+
+#stickyModal .close-modal:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Ajustar header para dar espacio a la X */
+#stickyModal .modal-header {
+  justify-content: flex-start;
+  padding-right: 50px;
+}
+
 .char-counter {
   font-size: 12px;
   color: #9ca3af;
@@ -1952,12 +2044,72 @@ body {
 }
 
 /* Meeting Modal styling */
+#meetingModal .modal-content {
+  max-width: 700px;
+  width: 95%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
 #meetingModal .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 #meetingModal textarea {
   resize: vertical;
+  min-height: 50px;
+}
+
+/* Mejorar el input de datetime-local */
+#meetingModal input[type="datetime-local"] {
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  background: #ffffff;
+  width: 100%;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+#meetingModal input[type="datetime-local"]:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+#meetingModal input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23374151" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>')
+    no-repeat;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+#meetingModal
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* Layout mejorado para meeting modal con más ancho */
+#meetingModal .form-group {
+  margin-bottom: 14px;
+}
+
+#meetingModal .form-group label {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+#meetingModal input[type="text"],
+#meetingModal textarea {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+#meetingModal textarea {
   min-height: 60px;
 }
 
@@ -2026,22 +2178,24 @@ body {
 }
 
 .note-action-btn {
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
   border: none;
   border-radius: 6px;
   width: 32px;
   height: 32px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #6b7280;
 }
 
 .note-action-btn:hover {
-  background: #ffffff;
   transform: scale(1.1);
+  background: rgba(0, 0, 0, 0.05);
+  color: #374151;
 }
 
 .note-content {
@@ -2096,6 +2250,8 @@ body {
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
+  margin-top: 12px;
+  align-self: flex-start;
 }
 
 .checklist-items {
@@ -2110,6 +2266,15 @@ body {
   gap: 8px;
   font-size: 14px;
   color: #4b5563;
+  padding: 4px 0;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.checklist-item-preview:hover {
+  background: rgba(59, 130, 246, 0.05);
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .checklist-item-preview.checked .item-text {
@@ -2125,6 +2290,20 @@ body {
   justify-content: center;
   font-size: 12px;
   color: #10b981;
+  transition: all 0.2s ease;
+}
+
+.checklist-item-preview:not(.checked) .checkmark {
+  color: #d1d5db;
+}
+
+.checklist-item-preview:hover .checkmark {
+  transform: scale(1.1);
+}
+
+.checklist-item-preview.checked .checkmark {
+  color: #10b981;
+  font-weight: bold;
 }
 
 .more-items {
@@ -2219,6 +2398,19 @@ body {
 
 .sticky-card:hover {
   transform: rotate(0deg) translateY(-4px);
+}
+
+.sticky-card .note-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+
+.sticky-card:hover .note-actions {
+  opacity: 1;
 }
 
 .sticky-content {

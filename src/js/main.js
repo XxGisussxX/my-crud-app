@@ -50,6 +50,26 @@ function createNote(noteData) {
   return newNote;
 }
 
+function updateNote(noteId, updateData) {
+  const notes = getNotes();
+  const noteIndex = notes.findIndex((note) => note.id === noteId);
+
+  if (noteIndex === -1) return;
+
+  // Mantener datos originales y actualizar con los nuevos
+  notes[noteIndex] = {
+    ...notes[noteIndex],
+    ...updateData,
+    // Mantener specificData si existe
+    ...(updateData.specificData && { specificData: updateData.specificData }),
+    updatedAt: new Date().toISOString(),
+  };
+
+  saveNotes(notes);
+  renderNotes();
+  return notes[noteIndex];
+}
+
 function getDefaultColor(type) {
   const colors = {
     standard: "#fef3c7",
@@ -72,6 +92,33 @@ function renderNotes() {
   }
 
   container.innerHTML = notes.map((note) => renderNoteCard(note)).join("");
+
+  // Event delegation para los botones de acción de notas
+  if (!container.dataset.listenerAdded) {
+    container.addEventListener("click", (e) => {
+      const noteCard = e.target.closest(".note-card");
+      if (!noteCard) return;
+
+      const noteId = noteCard.dataset.noteId;
+      if (!noteId) return;
+
+      // Manejar clicks en botones de acción
+      if (e.target.classList.contains("edit-note")) {
+        editNote(noteId);
+      } else if (e.target.classList.contains("delete-note")) {
+        deleteNoteWithConfirmation(noteId);
+      }
+      // Manejar clicks en items de checklist
+      else if (e.target.closest(".checklist-item-preview")) {
+        const itemPreview = e.target.closest(".checklist-item-preview");
+        const itemIndex = parseInt(itemPreview.dataset.itemIndex);
+        if (!isNaN(itemIndex)) {
+          toggleChecklistItem(noteId, itemIndex);
+        }
+      }
+    });
+    container.dataset.listenerAdded = "true";
+  }
 }
 
 function renderNoteCard(note) {
@@ -100,8 +147,131 @@ function renderNoteCard(note) {
 
     case "sticky":
       return `<div class="note-card sticky-card" style="background-color: ${note.color}" data-note-id="${note.id}">
+        <div class="note-actions">
+          <button class="note-action-btn edit-note" title="Edit">✏️</button>
+          <button class="note-action-btn delete-note" title="Delete">🗑️</button>
+        </div>
         <div class="sticky-content"><p>${note.content}</p></div>
         <div class="sticky-pin">📌</div>
+      </div>`;
+
+    case "checklist":
+      const items = note.specificData?.items || [];
+      const completedItems = items.filter((item) => item.checked).length;
+      const totalItems = items.length;
+      const progressText =
+        totalItems > 0 ? `${completedItems}/${totalItems}` : "0/0";
+
+      return `<div class="note-card checklist-card" data-note-id="${note.id}">
+        <div class="note-header">
+          <h3 class="note-title">${note.title}</h3>
+          <div class="note-actions">
+            <button class="note-action-btn edit-note" title="Edit">✏️</button>
+            <button class="note-action-btn delete-note" title="Delete">🗑️</button>
+          </div>
+        </div>
+        <div class="note-content">
+          <div class="checklist-items">
+            ${items
+              .slice(0, 5)
+              .map(
+                (item, index) => `
+              <div class="checklist-item-preview ${
+                item.checked ? "checked" : ""
+              }" 
+                   data-item-index="${index}" 
+                   style="cursor: pointer; user-select: none;">
+                <span class="checkmark" style="cursor: pointer;">${
+                  item.checked ? "✓" : "○"
+                }</span>
+                <span class="item-text" style="cursor: pointer;">${
+                  item.text
+                }</span>
+              </div>
+            `
+              )
+              .join("")}
+            ${
+              totalItems > 5
+                ? `<div class="more-items">+${totalItems - 5} more items</div>`
+                : ""
+            }
+          </div>
+          <div class="checklist-progress">${progressText}</div>
+        </div>
+        <div class="note-footer">
+          <div class="note-date">${formattedDate}</div>
+        </div>
+      </div>`;
+
+    case "idea":
+      const keyPoints = note.specificData?.keyPoints || [];
+      const potential = note.specificData?.potential || "normal";
+
+      return `<div class="note-card idea-card" data-note-id="${note.id}">
+        <div class="note-header">
+          <h3 class="note-title">${note.title}</h3>
+          <div class="note-actions">
+            <button class="note-action-btn edit-note" title="Edit">✏️</button>
+            <button class="note-action-btn delete-note" title="Delete">🗑️</button>
+          </div>
+        </div>
+        <div class="note-content">
+          <div class="idea-potential ${potential}">${potential}</div>
+          <div class="idea-description"><p>${note.content}</p></div>
+          ${
+            keyPoints.length > 0
+              ? `
+            <div class="key-points">
+              ${keyPoints
+                .slice(0, 3)
+                .map((point) => `<div class="key-point">${point}</div>`)
+                .join("")}
+              ${
+                keyPoints.length > 3
+                  ? `<div class="more-items">+${
+                      keyPoints.length - 3
+                    } more points</div>`
+                  : ""
+              }
+            </div>
+          `
+              : ""
+          }
+        </div>
+        <div class="note-footer">
+          <div class="note-date">${formattedDate}</div>
+        </div>
+      </div>`;
+
+    case "meeting":
+      const attendees = note.specificData?.attendees || "";
+      const meetingDate = note.specificData?.date
+        ? new Date(note.specificData.date).toLocaleString()
+        : "";
+      const agenda = note.specificData?.agenda || "";
+
+      return `<div class="note-card meeting-card" data-note-id="${note.id}">
+        <div class="note-header">
+          <h3 class="note-title">${note.title}</h3>
+          <div class="note-actions">
+            <button class="note-action-btn edit-note" title="Edit">✏️</button>
+            <button class="note-action-btn delete-note" title="Delete">🗑️</button>
+          </div>
+        </div>
+        <div class="note-content">
+          ${meetingDate ? `<div class="meeting-date">${meetingDate}</div>` : ""}
+          ${
+            attendees
+              ? `<div class="attendees">Attendees: ${attendees}</div>`
+              : ""
+          }
+          ${agenda ? `<div class="agenda-preview">${agenda}</div>` : ""}
+          ${note.content ? `<p>${note.content}</p>` : ""}
+        </div>
+        <div class="note-footer">
+          <div class="note-date">${formattedDate}</div>
+        </div>
       </div>`;
 
     default:
@@ -392,6 +562,24 @@ function initNoteModals() {
   // Standard Note Modal
   const standardModal = document.getElementById("standardNoteModal");
   const standardForm = document.getElementById("standardNoteForm");
+  const closeStandardNote = document.getElementById("closeStandardNote");
+  const cancelStandardNote = document.getElementById("cancelStandardNote");
+
+  function closeStandardModalFunc() {
+    if (standardModal) standardModal.style.display = "none";
+    if (standardForm) standardForm.reset();
+    window.editingNoteId = null;
+  }
+
+  if (closeStandardNote)
+    closeStandardNote.addEventListener("click", closeStandardModalFunc);
+  if (cancelStandardNote)
+    cancelStandardNote.addEventListener("click", closeStandardModalFunc);
+  if (standardModal) {
+    standardModal.addEventListener("click", (e) => {
+      if (e.target === standardModal) closeStandardModalFunc();
+    });
+  }
 
   if (standardForm) {
     standardForm.addEventListener("submit", (e) => {
@@ -402,21 +590,44 @@ function initNoteModals() {
         .map((tag) => tag.trim())
         .filter((tag) => tag);
 
-      createNote({
+      const noteData = {
         type: "standard",
         title: document.getElementById("standardTitle").value,
         content: document.getElementById("standardContent").value,
         specificData: { tags },
-      });
+      };
 
-      if (standardModal) standardModal.style.display = "none";
-      e.target.reset();
+      if (window.editingNoteId) {
+        updateNote(window.editingNoteId, noteData);
+        window.editingNoteId = null;
+      } else {
+        createNote(noteData);
+      }
+
+      closeStandardModalFunc();
     });
   }
 
   // Sticky Note Modal
   const stickyModal = document.getElementById("stickyModal");
   const stickyForm = document.getElementById("stickyForm");
+  const closeSticky = document.getElementById("closeSticky");
+  const cancelSticky = document.getElementById("cancelSticky");
+
+  function closeStickyModalFunc() {
+    if (stickyModal) stickyModal.style.display = "none";
+    if (stickyForm) stickyForm.reset();
+    window.editingNoteId = null;
+  }
+
+  if (closeSticky) closeSticky.addEventListener("click", closeStickyModalFunc);
+  if (cancelSticky)
+    cancelSticky.addEventListener("click", closeStickyModalFunc);
+  if (stickyModal) {
+    stickyModal.addEventListener("click", (e) => {
+      if (e.target === stickyModal) closeStickyModalFunc();
+    });
+  }
 
   if (stickyForm) {
     stickyForm.addEventListener("submit", (e) => {
@@ -432,15 +643,231 @@ function initNoteModals() {
         green: "#d1fae5",
       };
 
-      createNote({
+      const noteData = {
         type: "sticky",
         title: "",
         content: document.getElementById("stickyContent").value,
         color: colorMap[selectedColor] || "#fef3c7",
+      };
+
+      if (window.editingNoteId) {
+        updateNote(window.editingNoteId, noteData);
+        window.editingNoteId = null;
+      } else {
+        createNote(noteData);
+      }
+
+      closeStickyModalFunc();
+    });
+  }
+
+  // Checklist Note Modal
+  const checklistModal = document.getElementById("checklistModal");
+  const checklistForm = document.getElementById("checklistForm");
+  const closeChecklist = document.getElementById("closeChecklist");
+  const cancelChecklist = document.getElementById("cancelChecklist");
+
+  function closeChecklistModalFunc() {
+    if (checklistModal) checklistModal.style.display = "none";
+    if (checklistForm) checklistForm.reset();
+    // Limpiar items del checklist
+    const container = document.getElementById("checklistItems");
+    if (container)
+      container.innerHTML =
+        '<div class="checklist-item"><input type="text" placeholder="New item..." required /><button type="button" class="remove-item">&times;</button></div>';
+    window.editingNoteId = null;
+  }
+
+  if (closeChecklist)
+    closeChecklist.addEventListener("click", closeChecklistModalFunc);
+  if (cancelChecklist)
+    cancelChecklist.addEventListener("click", closeChecklistModalFunc);
+  if (checklistModal) {
+    checklistModal.addEventListener("click", (e) => {
+      if (e.target === checklistModal) closeChecklistModalFunc();
+    });
+  }
+
+  // Funcionalidad para añadir/remover items del checklist
+  const addChecklistItemBtn = document.getElementById("addChecklistItem");
+  const checklistItemsContainer = document.getElementById("checklistItems");
+
+  function addChecklistItem() {
+    const itemDiv = document.createElement("div");
+    itemDiv.className = "checklist-item";
+    itemDiv.innerHTML = `
+      <input type="text" placeholder="New item..." required />
+      <button type="button" class="remove-item">&times;</button>
+    `;
+
+    // Agregar event listener para el botón de remover
+    const removeBtn = itemDiv.querySelector(".remove-item");
+    removeBtn.addEventListener("click", () => {
+      itemDiv.remove();
+    });
+
+    checklistItemsContainer.appendChild(itemDiv);
+
+    // Focus en el nuevo input
+    const newInput = itemDiv.querySelector("input");
+    newInput.focus();
+  }
+
+  function removeChecklistItem(button) {
+    const item = button.closest(".checklist-item");
+    if (checklistItemsContainer.children.length > 1) {
+      item.remove();
+    }
+  }
+
+  if (addChecklistItemBtn) {
+    addChecklistItemBtn.addEventListener("click", addChecklistItem);
+  }
+
+  // Event delegation para botones de remover existentes y futuros
+  if (checklistItemsContainer) {
+    checklistItemsContainer.addEventListener("click", (e) => {
+      if (e.target.classList.contains("remove-item")) {
+        removeChecklistItem(e.target);
+      }
+    });
+  }
+
+  // Handler para el formulario de checklist
+  if (checklistForm) {
+    checklistForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const items = [];
+      const inputs = checklistItemsContainer.querySelectorAll(
+        ".checklist-item input"
+      );
+      inputs.forEach((input) => {
+        if (input.value.trim()) {
+          items.push({
+            text: input.value.trim(),
+            checked: input.dataset.checked === "true",
+          });
+        }
       });
 
-      if (stickyModal) stickyModal.style.display = "none";
-      e.target.reset();
+      const noteData = {
+        type: "checklist",
+        title: document.getElementById("checklistTitle").value,
+        content: "",
+        specificData: {
+          items: items,
+        },
+      };
+
+      if (window.editingNoteId) {
+        updateNote(window.editingNoteId, noteData);
+        window.editingNoteId = null;
+      } else {
+        createNote(noteData);
+      }
+
+      closeChecklistModalFunc();
+    });
+  }
+
+  // Idea Note Modal
+  const ideaModal = document.getElementById("ideaModal");
+  const ideaForm = document.getElementById("ideaForm");
+  const closeIdea = document.getElementById("closeIdea");
+  const cancelIdea = document.getElementById("cancelIdea");
+
+  function closeIdeaModalFunc() {
+    if (ideaModal) ideaModal.style.display = "none";
+    if (ideaForm) ideaForm.reset();
+    window.editingNoteId = null;
+  }
+
+  if (closeIdea) closeIdea.addEventListener("click", closeIdeaModalFunc);
+  if (cancelIdea) cancelIdea.addEventListener("click", closeIdeaModalFunc);
+  if (ideaModal) {
+    ideaModal.addEventListener("click", (e) => {
+      if (e.target === ideaModal) closeIdeaModalFunc();
+    });
+  }
+
+  // Handler para el formulario de idea
+  if (ideaForm) {
+    ideaForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const keyPointsValue = document.getElementById("ideaKeyPoints").value;
+      const keyPoints = keyPointsValue
+        ? keyPointsValue.split("\n").filter((point) => point.trim())
+        : [];
+
+      const noteData = {
+        type: "idea",
+        title: document.getElementById("ideaTitle").value,
+        content: document.getElementById("ideaDescription").value,
+        specificData: {
+          potential: document.getElementById("ideaPotential").value,
+          keyPoints: keyPoints,
+        },
+      };
+
+      if (window.editingNoteId) {
+        updateNote(window.editingNoteId, noteData);
+        window.editingNoteId = null;
+      } else {
+        createNote(noteData);
+      }
+
+      closeIdeaModalFunc();
+    });
+  }
+
+  // Meeting Note Modal
+  const meetingModal = document.getElementById("meetingModal");
+  const meetingForm = document.getElementById("meetingForm");
+  const closeMeeting = document.getElementById("closeMeeting");
+  const cancelMeeting = document.getElementById("cancelMeeting");
+
+  function closeMeetingModalFunc() {
+    if (meetingModal) meetingModal.style.display = "none";
+    if (meetingForm) meetingForm.reset();
+    window.editingNoteId = null;
+  }
+
+  if (closeMeeting)
+    closeMeeting.addEventListener("click", closeMeetingModalFunc);
+  if (cancelMeeting)
+    cancelMeeting.addEventListener("click", closeMeetingModalFunc);
+  if (meetingModal) {
+    meetingModal.addEventListener("click", (e) => {
+      if (e.target === meetingModal) closeMeetingModalFunc();
+    });
+  }
+
+  // Handler para el formulario de meeting
+  if (meetingForm) {
+    meetingForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const noteData = {
+        type: "meeting",
+        title: document.getElementById("meetingTitle").value,
+        content: document.getElementById("meetingNotes").value,
+        specificData: {
+          date: document.getElementById("meetingDate").value,
+          attendees: document.getElementById("meetingAttendees").value,
+          agenda: document.getElementById("meetingAgenda").value,
+        },
+      };
+
+      if (window.editingNoteId) {
+        updateNote(window.editingNoteId, noteData);
+        window.editingNoteId = null;
+      } else {
+        createNote(noteData);
+      }
+
+      closeMeetingModalFunc();
     });
   }
 }
@@ -448,11 +875,161 @@ function initNoteModals() {
 function openSpecificNoteModal(noteType) {
   const modals = {
     standard: document.getElementById("standardNoteModal"),
+    checklist: document.getElementById("checklistModal"),
+    idea: document.getElementById("ideaModal"),
+    meeting: document.getElementById("meetingModal"),
     sticky: document.getElementById("stickyModal"),
   };
 
   const modal = modals[noteType];
   if (modal) modal.style.display = "flex";
+}
+
+// ============================================
+// FUNCIONES DE GESTIÓN DE NOTAS
+// ============================================
+
+function deleteNote(noteId) {
+  const notes = getNotes();
+  const updatedNotes = notes.filter((note) => note.id !== noteId);
+  saveNotes(updatedNotes);
+  renderNotes();
+}
+
+function deleteNoteWithConfirmation(noteId) {
+  const notes = getNotes();
+  const note = notes.find((n) => n.id === noteId);
+  if (!note) return;
+
+  const noteTitle =
+    note.title ||
+    note.content.substring(0, 30) + (note.content.length > 30 ? "..." : "");
+
+  showConfirmation({
+    title: "Eliminar nota",
+    message: `¿Estás seguro de que deseas eliminar "${noteTitle}"?`,
+    type: "delete",
+    confirmText: "Eliminar",
+    cancelText: "Cancelar",
+    onConfirm: () => {
+      deleteNote(noteId);
+    },
+  });
+}
+
+function toggleChecklistItem(noteId, itemIndex) {
+  const notes = getNotes();
+  const note = notes.find((n) => n.id === noteId);
+  if (!note || note.type !== "checklist" || !note.specificData?.items) return;
+
+  // Toggle el estado checked del item
+  if (note.specificData.items[itemIndex]) {
+    note.specificData.items[itemIndex].checked =
+      !note.specificData.items[itemIndex].checked;
+
+    // Guardar cambios
+    saveNotes(notes);
+
+    // Re-renderizar solo esta nota para actualizar visualmente
+    renderNotes();
+  }
+}
+
+function editNote(noteId) {
+  const notes = getNotes();
+  const note = notes.find((n) => n.id === noteId);
+  if (!note) return;
+
+  // Abrir el modal específico para el tipo de nota
+  openSpecificNoteModal(note.type);
+
+  // Llenar los campos con los datos existentes
+  populateNoteModal(note);
+}
+
+function populateNoteModal(note) {
+  // Guardar el ID de la nota que se está editando
+  window.editingNoteId = note.id;
+
+  switch (note.type) {
+    case "standard":
+      document.getElementById("standardTitle").value = note.title || "";
+      document.getElementById("standardContent").value = note.content || "";
+      if (note.specificData?.tags) {
+        document.getElementById("standardTags").value =
+          note.specificData.tags.join(", ");
+      }
+      break;
+
+    case "sticky":
+      document.getElementById("stickyContent").value = note.content || "";
+      // Seleccionar el color correspondiente
+      const colorMap = {
+        "#fef3c7": "yellow",
+        "#fce7f3": "pink",
+        "#dbeafe": "blue",
+        "#d1fae5": "green",
+      };
+      const colorValue = colorMap[note.color] || "yellow";
+      const colorRadio = document.querySelector(
+        `input[name="stickyColor"][value="${colorValue}"]`
+      );
+      if (colorRadio) colorRadio.checked = true;
+      break;
+
+    case "checklist":
+      document.getElementById("checklistTitle").value = note.title || "";
+      // Poblar items del checklist
+      const container = document.getElementById("checklistItems");
+      container.innerHTML = "";
+      if (note.specificData?.items) {
+        note.specificData.items.forEach((item) => {
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "checklist-item";
+          itemDiv.innerHTML = `
+            <input type="text" value="${item.text}" required ${
+            item.checked ? 'data-checked="true"' : ""
+          } />
+            <button type="button" class="remove-item">&times;</button>
+          `;
+
+          const removeBtn = itemDiv.querySelector(".remove-item");
+          removeBtn.addEventListener("click", () => itemDiv.remove());
+
+          container.appendChild(itemDiv);
+        });
+      }
+      break;
+
+    case "idea":
+      document.getElementById("ideaTitle").value = note.title || "";
+      document.getElementById("ideaDescription").value = note.content || "";
+      if (note.specificData?.potential) {
+        document.getElementById("ideaPotential").value =
+          note.specificData.potential;
+      }
+      if (note.specificData?.keyPoints) {
+        document.getElementById("ideaKeyPoints").value =
+          note.specificData.keyPoints.join("\n");
+      }
+      break;
+
+    case "meeting":
+      document.getElementById("meetingTitle").value = note.title || "";
+      if (note.specificData?.date) {
+        document.getElementById("meetingDate").value = note.specificData.date;
+      }
+      if (note.specificData?.attendees) {
+        document.getElementById("meetingAttendees").value =
+          note.specificData.attendees;
+      }
+      if (note.specificData?.agenda) {
+        document.getElementById("meetingAgenda").value =
+          note.specificData.agenda;
+      }
+      document.getElementById("meetingNotes").value = note.content || "";
+      break;
+  }
 }
 
 // ============================================
