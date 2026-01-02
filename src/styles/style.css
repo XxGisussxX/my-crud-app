@@ -11,10 +11,11 @@ body {
   background: #f9fafb;
   height: 100vh;
   overflow: hidden;
+  margin: 0;
   display: flex;
 }
 
-/* Sidebar */
+/* Sidebar - Responsive: fijo en desktop, drawer en móvil */
 .sidebar {
   width: 280px;
   background: #1e40af;
@@ -24,6 +25,76 @@ body {
   height: 100vh;
   overflow-y: auto;
   border-right: 1px solid rgba(30, 64, 175, 0.2);
+  z-index: 1000;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* En desktop: sidebar fijo */
+@media (min-width: 1025px) {
+  .sidebar {
+    position: relative;
+    left: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: calc(100% - 280px);
+  }
+
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  .hamburger-btn {
+    display: none !important;
+  }
+}
+
+/* Regla adicional para asegurar que hamburguesa esté oculta en desktop */
+@media (min-width: 1025px) {
+  #hamburgerBtn,
+  .hamburger-btn {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* En tablet y móvil: sidebar como drawer */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+/* Overlay para cerrar drawer en móvil */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 .logo {
@@ -90,26 +161,16 @@ body {
   padding-top: 20px;
 }
 
-.stat-card {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 14px;
-}
-
-.stat-card h3 {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stat-card .number {
-  font-size: 24px;
-  font-weight: 700;
-  color: #fff;
+/* Layout principal */
+body {
+  margin: 0;
+  padding: 0;
+  background: #f9fafb;
+  font-family: "Inter", "SF Pro Display", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
 }
 
 /* Main Content */
@@ -119,6 +180,7 @@ body {
   flex-direction: column;
   height: 100vh;
   overflow-y: auto;
+  transition: all 0.3s ease;
 }
 
 .header {
@@ -129,6 +191,53 @@ body {
   gap: 20px;
   border-bottom: 1px solid #e5e7eb;
   background: #ffffff;
+}
+
+/* Botón hamburguesa */
+.hamburger-btn {
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 4px;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.hamburger-btn:hover {
+  background: #f3f4f6;
+}
+
+.hamburger-line {
+  width: 20px;
+  height: 2px;
+  background: #374151;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-btn.active .hamburger-line:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
 .header-title {
@@ -221,25 +330,6 @@ body {
   color: #1f2937;
 }
 
-.notification-btn {
-  width: 48px;
-  height: 48px;
-  background: transparent;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #6b7280;
-  transition: all 0.2s;
-  border-radius: 8px;
-}
-
-.notification-btn:hover {
-  background: #f3f4f6;
-  color: #1f2937;
-}
-
 .add-task-btn {
   padding: 12px 26px;
   background: #3b82f6;
@@ -280,7 +370,7 @@ body {
 
 .tasks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
   width: 100%;
 }
@@ -365,13 +455,107 @@ body {
 /* Charts Container */
 .charts-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  padding: 40px;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 120px auto;
+  gap: 8px 16px;
+  row-gap: 4px;
+  padding: 20px;
   background: #f9fafb;
-  max-height: calc(100vh - 400px);
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
+/* Las primeras 3 tarjetas (estadísticas) ocupan cada una su columna en la fila 1 */
+.chart-wrapper.stat-wrapper:nth-child(1) {
+  grid-column: 1;
+  grid-row: 1;
+}
+.chart-wrapper.stat-wrapper:nth-child(2) {
+  grid-column: 2;
+  grid-row: 1;
+}
+.chart-wrapper.stat-wrapper:nth-child(3) {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+/* Evolución de Tareas ocupa 2 columnas en la fila 2 */
+.chart-wrapper:nth-child(4) {
+  grid-column: 1 / span 2;
+  grid-row: 2;
+}
+
+/* Distribución por Prioridad ocupa 1 columna en la fila 2 */
+.chart-wrapper:nth-child(5) {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+/* Responsive: Ajuste del contenedor para pantallas pequeñas */
+@media (max-width: 1200px) {
+  .charts-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* Estadísticas: 2 arriba, 1 abajo */
+  .chart-wrapper.stat-wrapper:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .chart-wrapper.stat-wrapper:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .chart-wrapper.stat-wrapper:nth-child(3) {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+  }
+
+  /* Gráficas: cada una en su fila */
+  .chart-wrapper:nth-child(4) {
+    grid-column: 1 / span 2;
+    grid-row: 3;
+  }
+  .chart-wrapper:nth-child(5) {
+    grid-column: 1 / span 2;
+    grid-row: 4;
+  }
+}
+
+@media (max-width: 768px) {
+  .charts-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  /* En móvil: todo en una columna */
+  .chart-wrapper.stat-wrapper:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .chart-wrapper.stat-wrapper:nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .chart-wrapper.stat-wrapper:nth-child(3) {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .chart-wrapper:nth-child(4) {
+    grid-column: 1;
+    grid-row: 4;
+  }
+  .chart-wrapper:nth-child(5) {
+    grid-column: 1;
+    grid-row: 5;
+  }
+}
+
+/* Chart Wrapper - Usado tanto para gráficas como para estadísticas */
 .chart-wrapper {
   background: #ffffff;
   border: 1px solid #e5e7eb;
@@ -382,6 +566,102 @@ body {
   flex-direction: column;
   height: fit-content;
   max-height: 350px;
+}
+
+/* Stat Wrapper - Tarjetas de estadísticas */
+.chart-wrapper.stat-wrapper {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  max-height: 90px;
+  height: auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Stat Icon */
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon.success {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.stat-icon.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.stat-icon.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.stat-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Stat Content */
+.stat-content {
+  flex: 1;
+}
+
+.stat-label {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-value .unit {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* Stat Change Indicator */
+.stat-change {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.stat-change.positive {
+  color: #10b981;
+}
+
+.stat-change.negative {
+  color: #ef4444;
+}
+
+.stat-change .arrow {
+  font-size: 1rem;
+}
+
+.stat-change .percentage {
+  font-weight: 600;
 }
 
 .chart-title {
@@ -470,21 +750,40 @@ body {
 }
 
 @media (max-width: 1024px) {
+  body {
+    display: block;
+  }
+
   .sidebar {
-    width: 240px;
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .main-content {
+    width: 100%;
+    margin-left: 0;
   }
 
   .tasks-container-wrapper {
-    padding: 30px 50px;
+    padding: 24px 40px;
   }
 
   .tasks-grid {
     gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    max-width: 100%;
   }
 
   .task-card {
-    min-width: 260px;
-    max-width: 260px;
+    min-width: 280px;
+    max-width: 100%;
+    width: 100%;
   }
 
   .carousel-arrow {
@@ -492,43 +791,153 @@ body {
     height: 40px;
   }
 
-  .charts-container {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 30px;
+  /* Ajustar el layout del header para 1024px */
+  .header {
+    padding: 16px 40px;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .filter-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .add-task-btn {
+    padding: 12px 20px;
+    font-size: 15px;
   }
 }
 
-@media (max-width: 768px) {
-  body {
-    flex-direction: column;
+/* Breakpoint específico para tablets (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .tasks-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 22px;
   }
 
-  .sidebar {
-    width: 100%;
-    height: auto;
-    padding: 20px;
-  }
-
-  .main-content {
-    height: auto;
-  }
-
-  .header {
-    flex-direction: column;
-    padding: 20px;
-  }
-
-  .search-bar {
-    max-width: 100%;
+  .task-card {
+    min-width: 300px;
   }
 
   .tasks-container-wrapper {
-    padding: 20px 40px;
+    padding: 28px 36px;
+  }
+
+  .header {
+    padding: 18px 36px;
+  }
+
+  .filter-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+
+.charts-container {
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 30px;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+  }
+
+  .header-left {
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .hamburger-btn {
+    flex-shrink: 0;
+    display: none !important; /* Ocultar en tablet también */
+  }
+
+  .search-bar {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .search-bar input {
+    padding: 10px 12px 10px 40px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .search-bar svg {
+    left: 14px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .header-actions {
+    gap: 6px;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 16px;
+    white-space: nowrap;
+    min-width: max-content;
+  }
+
+  /* Botón de agregar en móvil: fixed en esquina inferior derecha */
+  .add-task-btn {
+    position: fixed !important;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    border-radius: 50% !important;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+    z-index: 1000;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .add-task-btn span {
+    display: none;
+  }
+
+  .add-task-btn svg {
+    margin: 0;
+    width: 24px;
+    height: 24px;
+  }
+
+  .tasks-container-wrapper {
+    padding: 16px 20px;
+    padding-bottom: 100px; /* Espacio para el botón flotante */
+  }
+
+  /* Agregar padding inferior a todas las secciones de contenido en móvil */
+  .section-content {
+    padding-bottom: 100px;
+  }
+
+  .charts-container {
+    padding-bottom: 80px;
+  }
+
+  #notasGrid {
+    padding-bottom: 80px;
   }
 
   .tasks-grid {
     gap: 16px;
+    padding-bottom: 20px;
   }
 
   .task-card {
@@ -547,6 +956,45 @@ body {
 
   .carousel-arrow-right {
     right: 4px;
+  }
+
+  /* Layout específico para pantallas pequeñas */
+  .header-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  /* Orden específico: ☰ 🔍 All | Active | Completed (sin el botón +) */
+  .hamburger-btn {
+    order: 1;
+    display: none !important; /* Forzar ocultar en desktop */
+  }
+
+  .search-bar {
+    order: 2;
+    margin-left: 8px;
+    margin-right: 8px;
+  }
+
+  .filter-btn:nth-child(1) {
+    order: 3;
+  }
+
+  .filter-btn:nth-child(2) {
+    order: 4;
+  }
+
+  .filter-btn:nth-child(3) {
+    order: 5;
   }
 }
 
@@ -914,11 +1362,12 @@ body {
 
 /* Calendar Styles */
 .calendario-container {
-  padding: 40px;
+  padding: 20px;
   flex: 1;
-  min-height: calc(100vh - 80px);
-  padding-top: 20px;
-  overflow-y: hidden;
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 #calendario {
@@ -926,9 +1375,10 @@ body {
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-width: 100%;
-  min-height: 400px;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  overflow: hidden;
 }
 
 /* FullCalendar Header Toolbar */
