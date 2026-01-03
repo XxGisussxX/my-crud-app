@@ -1,0 +1,142 @@
+/* ==============================================
+   SIDEBAR
+   ============================================== */
+
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--color-sidebar);
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid rgba(30, 64, 175, 0.2);
+  z-index: var(--z-sticky);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+}
+
+/* Logo Section */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-4xl);
+  padding: 0 10px;
+}
+
+.logo-icon {
+  width: 45px;
+  height: 45px;
+  background: linear-gradient(135deg, #667eea 0%, #2fc248 100%);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.logo-text h2 {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: #fff;
+}
+
+.logo-text p {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Navigation Items */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 6px;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-md);
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.nav-item svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* Stats Section */
+.stats {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+/* Sidebar Overlay (Mobile) */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-overlay);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Responsive: Desktop */
+@media (min-width: 1025px) {
+  .sidebar {
+    position: relative;
+    left: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: calc(100% - var(--sidebar-width));
+  }
+
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  .hamburger-btn {
+    display: none !important;
+  }
+}
+
+/* Responsive: Tablet & Mobile */
+@media (max-width: 1024px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: calc(-1 * var(--sidebar-width));
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .main-content {
+    width: 100%;
+    margin-left: 0;
+  }
+}

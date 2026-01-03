@@ -1,0 +1,208 @@
+/* ==============================================
+   TASK CARDS
+   ============================================== */
+
+.task-card {
+  background: #ffffff;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-xl);
+  padding: 26px;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  min-width: 300px;
+  max-width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+}
+
+.task-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.task-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.task-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-full);
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.task-indicator.high {
+  background: var(--color-priority-high);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.task-indicator.medium {
+  background: var(--color-priority-medium);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
+
+.task-indicator.low {
+  background: var(--color-priority-low);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.task-indicator.done,
+.task-indicator.completed {
+  background: var(--color-priority-done);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.task-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  color: var(--color-gray-800);
+}
+
+.task-description {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-500);
+  line-height: 1.6;
+}
+
+.task-card.completed .task-description {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.task-card.completed {
+  opacity: 0.75;
+  animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-30px);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 0.75;
+  }
+}
+
+.task-footer {
+  display: block;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-gray-200);
+}
+
+.task-date {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 13px;
+  color: var(--color-gray-500);
+  margin: 10px;
+}
+
+.task-date svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Priority Badges */
+.priority-badge {
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.priority-badge.high {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--color-priority-high);
+}
+
+.priority-badge.medium {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-priority-medium);
+}
+
+.priority-badge.low {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-priority-low);
+}
+
+.priority-badge.done {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-priority-done);
+}
+
+/* Highlight for Search */
+.task-title mark,
+.task-description mark {
+  background-color: #dbeafe;
+  color: #1e40af;
+  padding: 0 2px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
+/* No Results Message */
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-lg);
+  background: var(--color-gray-50);
+  border: 2px dashed var(--color-gray-300);
+  border-radius: var(--radius-lg);
+  margin: 20px 0;
+}
+
+.no-results::before {
+  content: "🔍";
+  font-size: 48px;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.7;
+}
+
+/* Responsive: Tablet */
+@media (max-width: 1024px) {
+  .task-card {
+    min-width: 280px;
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Responsive: Mobile */
+@media (max-width: 768px) {
+  .task-card {
+    min-width: 100%;
+    max-width: 100%;
+  }
+
+  .no-results {
+    padding: 30px 15px;
+    font-size: var(--font-size-base);
+  }
+
+  .no-results::before {
+    font-size: 36px;
+    margin-bottom: var(--spacing-md);
+  }
+}
