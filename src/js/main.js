@@ -1045,7 +1045,7 @@ function initApp() {
   initModals();
   initDrawer();
   initNoteModals();
-
+  
   // Inicializar charts
   initCharts();
 
