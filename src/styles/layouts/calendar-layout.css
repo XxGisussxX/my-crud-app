@@ -1,0 +1,204 @@
+/* ==============================================
+   CALENDAR LAYOUT
+   ============================================== */
+
+.calendario-container {
+  padding: var(--spacing-xl);
+  flex: 1;
+  height: calc(100vh - var(--header-height));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+  width: 100%;
+}
+
+#calendario {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* FullCalendar Header Toolbar */
+.fc-header-toolbar {
+  margin-bottom: var(--spacing-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg) 0;
+}
+
+.fc-toolbar-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  color: var(--color-gray-800);
+}
+
+.fc-button-group {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.fc-button {
+  background: #ffffff;
+  border: 1px solid var(--color-gray-200);
+  color: var(--color-gray-500);
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+}
+
+.fc-button:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-300);
+  color: var(--color-gray-800);
+}
+
+.fc-button:focus {
+  outline: none;
+}
+
+.fc-button:active {
+  background: var(--color-gray-200);
+}
+
+.fc-button-primary:not(:disabled):active,
+.fc-button-primary:not(:disabled).fc-button-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Navegación de meses */
+.fc-prev-button,
+.fc-next-button {
+  background: #ffffff;
+  border: 1px solid var(--color-gray-200);
+  color: var(--color-gray-500);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+}
+
+.fc-prev-button:hover,
+.fc-next-button:hover {
+  background: var(--color-gray-100);
+  border-color: var(--color-gray-300);
+  color: var(--color-gray-800);
+}
+
+/* Días de la semana */
+.fc-col-header-cell {
+  padding: 12px 8px;
+  background: var(--color-gray-50);
+  border-bottom: 2px solid var(--color-gray-200);
+}
+
+.fc-col-header-cell-cushion {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Celdas del calendario */
+.fc-daygrid-day {
+  background: #ffffff;
+  border: 1px solid var(--color-gray-200);
+}
+
+.fc-daygrid-day-number {
+  padding: 8px;
+  font-size: var(--font-size-base);
+  color: var(--color-gray-800);
+  font-weight: 500;
+}
+
+.fc-day-today {
+  background: #eff6ff !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Eventos del calendario */
+.fc-event {
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  margin: 2px 0;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fc-event-title {
+  padding: 0;
+  font-weight: 500;
+}
+
+.fc-event-title-container {
+  padding: 0;
+}
+
+/* Días de otros meses */
+.fc-day-other {
+  background: var(--color-gray-50);
+}
+
+.fc-day-other .fc-daygrid-day-number {
+  color: var(--color-gray-400);
+}
+
+/* Popover para eventos múltiples */
+.fc-more-link {
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background var(--transition-fast);
+}
+
+.fc-more-link:hover {
+  background: #eff6ff;
+}
+
+/* Responsive: Mobile */
+@media (max-width: 768px) {
+  .calendario-container {
+    padding: var(--spacing-xl);
+  }
+
+  #calendario {
+    padding: var(--spacing-lg);
+  }
+
+  .fc-header-toolbar {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    align-items: flex-start;
+  }
+
+  .fc-toolbar-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .fc-button {
+    padding: 6px 12px;
+    font-size: var(--font-size-sm);
+  }
+}

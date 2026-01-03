@@ -1,0 +1,68 @@
+/* ==============================================
+   NOTES LAYOUT
+   ============================================== */
+
+.notas-container {
+  background: var(--color-gray-50);
+  min-height: calc(100vh - var(--header-height));
+  max-height: calc(100vh - var(--header-height));
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+.notas-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notas-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.notas-container::-webkit-scrollbar-thumb {
+  background: var(--color-gray-300);
+  border-radius: 10px;
+}
+
+.notas-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.notas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-2xl);
+  width: 100%;
+  padding: 20px 60px;
+  grid-auto-flow: dense;
+  grid-auto-rows: 150px;
+}
+
+/* Responsive: Tablet */
+@media (max-width: 1024px) {
+  .notas-container {
+    padding: 24px 20px;
+  }
+
+  .notas-grid {
+    gap: var(--spacing-lg);
+  }
+}
+
+/* Responsive: Mobile */
+@media (max-width: 768px) {
+  .notas-container {
+    padding: 24px 20px;
+  }
+
+  .notas-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+
+  #notasGrid {
+    padding-bottom: 80px;
+  }
+}

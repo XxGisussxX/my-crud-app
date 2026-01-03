@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskMaster - Workspace</title>
+    <meta
+      name="description"
+      content="TaskMaster es una herramienta de productividad integral que combina gestión de tareas, programación de calendario, toma de notas y análisis de dashboard para ayudarte a mantenerte organizado y eficiente."
+    />
+    <meta
+      name="keywords"
+      content="gestor de tareas, productividad, lista de tareas, calendario, notas, dashboard"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="./assets/icons/favi.ico" />
+    <link rel="stylesheet" href="../src/styles/main.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- FullCalendar CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css"
+      rel="stylesheet"
+    />
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+  </head>
+  <body>
+    <!-- Overlay para cerrar drawer -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar Drawer -->
+    <aside class="sidebar" id="sidebar">
+      <div class="logo">
+        <div class="logo-icon">J</div>
+        <div class="logo-text">
+          <h2>Jesus Santamaria</h2>
+          <p>Workspace</p>
+        </div>
+      </div>
+
+      <nav>
+        <div class="nav-item active" data-section="tareas">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
+          </svg>
+          <span>Tareas</span>
+        </div>
+        <div class="nav-item" data-section="tablas">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+            ></path>
+          </svg>
+          <span>Tablas</span>
+        </div>
+        <div class="nav-item" data-section="calendario">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            ></path>
+          </svg>
+          <span>Calendario</span>
+        </div>
+        <div class="nav-item" data-section="dashboard">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+            ></path>
+          </svg>
+          <span>Dashboard</span>
+        </div>
+        <div class="nav-item" data-section="notas">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g
+              id="SVGRepo_tracerCarrier"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M16.3939 2.02121L16.4604 2.03904C17.5598 2.33361 18.431 2.56704 19.1162 2.81458C19.8172 3.06779 20.3888 3.35744 20.8597 3.79847C21.5453 4.44068 22.0252 5.27179 22.2385 6.18671C22.385 6.81503 22.3501 7.45486 22.2189 8.18849C22.0906 8.90573 21.8572 9.77697 21.5626 10.8764L21.0271 12.8747C20.7326 13.974 20.4991 14.8452 20.2516 15.5305C19.9984 16.2314 19.7087 16.803 19.2677 17.2739C18.6459 17.9377 17.8471 18.4087 16.9665 18.6316C16.7093 19.2213 16.3336 19.7554 15.8597 20.1993C15.3888 20.6403 14.8172 20.9299 14.1162 21.1832C13.431 21.4307 12.5598 21.6641 11.4605 21.9587L11.394 21.9765C10.2946 22.2711 9.42337 22.5045 8.70613 22.6328C7.9725 22.764 7.33266 22.7989 6.70435 22.6524C5.78943 22.4391 4.95832 21.9592 4.31611 21.2736C3.87508 20.8027 3.58542 20.2311 3.33222 19.5302C3.08468 18.8449 2.85124 17.9737 2.55667 16.8743L2.02122 14.876C1.72664 13.7766 1.4932 12.9054 1.36495 12.1882C1.23376 11.4546 1.19881 10.8147 1.34531 10.1864C1.55864 9.27149 2.03849 8.44038 2.72417 7.79817C3.19505 7.35714 3.76664 7.06749 4.46758 6.81428C5.15283 6.56674 6.02404 6.3333 7.12341 6.03873L7.15665 6.02983C7.42112 5.95896 7.67134 5.89203 7.90825 5.82944C8.29986 4.43031 8.64448 3.44126 9.31611 2.72417C9.95831 2.03849 10.7894 1.55864 11.7043 1.34531C12.3327 1.19881 12.9725 1.23376 13.7061 1.36495C14.4233 1.49319 15.2945 1.72664 16.3939 2.02121ZM7.45502 7.5028C6.36214 7.79571 5.57905 8.00764 4.9772 8.22505C4.36778 8.4452 4.00995 8.64907 3.74955 8.89296C3.2804 9.33237 2.95209 9.90103 2.80613 10.527C2.72511 10.8745 2.72747 11.2863 2.84152 11.9242C2.95723 12.5712 3.17355 13.381 3.47902 14.521L3.99666 16.4529C4.30212 17.5929 4.51967 18.4023 4.74299 19.0205C4.96314 19.63 5.16701 19.9878 5.4109 20.2482C5.85031 20.7173 6.41897 21.0456 7.04496 21.1916C7.39242 21.2726 7.80425 21.2703 8.4421 21.1562C9.08915 21.0405 9.89893 20.8242 11.0389 20.5187C12.1789 20.2132 12.9884 19.9957 13.6066 19.7724C14.216 19.5522 14.5739 19.3484 14.8343 19.1045C14.9719 18.9756 15.0973 18.8357 15.2096 18.6865C15.0306 18.6612 14.8463 18.629 14.6557 18.5911C13.9839 18.4575 13.1769 18.2413 12.1808 17.9744L12.1234 17.959C11.024 17.6644 10.1528 17.431 9.46758 17.1835C8.76664 16.9302 8.19505 16.6406 7.72416 16.1996C7.03849 15.5574 6.55864 14.7262 6.34531 13.8113C6.19881 13.183 6.23376 12.5432 6.36494 11.8095C6.4932 11.0923 6.72664 10.2211 7.02122 9.12174L7.45502 7.5028ZM13.4421 2.84152C12.8042 2.72747 12.3924 2.72511 12.045 2.80613C11.419 2.95209 10.8503 3.2804 10.4109 3.74955C9.97479 4.21518 9.70642 4.93452 9.2397 6.64323C9.16384 6.92093 9.08365 7.22023 8.99665 7.54488L8.47902 9.47673C8.17355 10.6167 7.95723 11.4265 7.84152 12.0736C7.72747 12.7114 7.72511 13.1232 7.80613 13.4707C7.95209 14.0967 8.2804 14.6654 8.74955 15.1048C9.00995 15.3487 9.36778 15.5525 9.9772 15.7727C10.5954 15.996 11.4049 16.2136 12.5449 16.519C13.5703 16.7938 14.3303 16.997 14.9482 17.1199C15.5635 17.2422 15.981 17.2723 16.3232 17.23C16.3976 17.2209 16.4691 17.2082 16.5389 17.1919C17.1649 17.0459 17.7335 16.7176 18.1729 16.2485C18.4168 15.9881 18.6207 15.6303 18.8408 15.0208C19.0642 14.4026 19.2817 13.5932 19.5872 12.4532L20.1048 10.5213C20.4103 9.38129 20.6266 8.57151 20.7423 7.92446C20.8564 7.28661 20.8587 6.87479 20.7777 6.52733C20.6317 5.90133 20.3034 5.33267 19.8343 4.89327C19.5739 4.64937 19.216 4.4455 18.6066 4.22535C17.9884 4.00203 17.1789 3.78448 16.0389 3.47902C14.8989 3.17355 14.0892 2.95723 13.4421 2.84152ZM11.0524 9.80588C11.1596 9.40578 11.5709 9.16834 11.971 9.27555L16.8006 10.5696C17.2007 10.6768 17.4381 11.0881 17.3309 11.4882C17.2237 11.8883 16.8125 12.1257 16.4124 12.0185L11.5827 10.7244C11.1826 10.6172 10.9452 10.206 11.0524 9.80588ZM10.2755 12.7036C10.3828 12.3035 10.794 12.066 11.1941 12.1733L14.0919 12.9497C14.492 13.0569 14.7294 13.4682 14.6222 13.8683C14.515 14.2684 14.1038 14.5058 13.7037 14.3986L10.8059 13.6221C10.4058 13.5149 10.1683 13.1037 10.2755 12.7036Z"
+                fill="#ffffff"
+              ></path>
+            </g>
+          </svg>
+          <span>Notas</span>
+        </div>
+      </nav>
+
+      <!-- <div class="stats">
+        <div class="stat-card">
+          <h3>Tasks Completed</h3>
+          <div class="number" id="tasksCompleted">0 / 0</div>
+        </div>
+        <div class="stat-card">
+          <h3>Active Tasks</h3>
+          <div class="number" id="activeTasks">0</div>
+        </div>
+      </div> -->
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="app-header">
+      <header class="header">
+        <div class="header-left">
+          <button class="hamburger-btn" id="hamburgerBtn">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+          </button>
+          <div class="search-bar">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              ></path>
+            </svg>
+            <input type="text" placeholder="Buscar tareas..." />
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="filter-btn active">Todo</button>
+          <button class="filter-btn">Activas</button>
+          <button class="filter-btn">Completadas</button>
+          <button
+            class="filter-icon-btn"
+            id="filterIconBtn"
+            style="display: none"
+          >
+            <svg
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h8"
+              ></path>
+            </svg>
+          </button>
+          <button class="add-task-btn" id="addBtn">
+            <svg
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              ></path>
+            </svg>
+            <span>Añadir Tarea</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Modal para crear nueva tarea -->
+      <div id="taskModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Nueva Tarea</h2>
+            <button class="close-modal" id="closeModal">&times;</button>
+          </div>
+          <form id="taskForm">
+            <div class="form-group">
+              <label for="taskTitle">Título de la tarea *</label>
+              <input
+                type="text"
+                id="taskTitle"
+                name="title"
+                required
+                placeholder="Ej: Estudiar para el examen de programacion"
+              />
+            </div>
+            <div class="form-group">
+              <label for="taskDescription">Descripción</label>
+              <textarea
+                id="taskDescription"
+                name="description"
+                rows="3"
+                placeholder="Describe los detalles de la tarea..."
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="taskPriority">Prioridad</label>
+              <select id="taskPriority" name="priority">
+                <option value="low">Baja</option>
+                <option value="medium" selected>Media</option>
+                <option value="high">Alta</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="taskDate">Fecha límite</label>
+              <input type="date" id="taskDate" name="date" />
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelBtn">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-submit">Crear Tarea</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Genérico de Confirmación -->
+      <div id="confirmationModal" class="modal">
+        <div class="modal-content modal-confirmation">
+          <div class="confirmation-icon" id="confirmationIcon">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <h2 id="confirmationTitle">¿Confirmar acción?</h2>
+          <p id="confirmationMessage">¿Estás seguro de que deseas continuar?</p>
+          <div class="modal-actions confirmation-actions">
+            <button type="button" class="btn-cancel" id="confirmationCancel">
+              Cancelar
+            </button>
+            <button type="button" class="btn-confirm" id="confirmationConfirm">
+              Confirmar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal para seleccionar tipo de nota -->
+      <div id="noteTypeModal" class="modal">
+        <div class="modal-content note-type-modal">
+          <div class="modal-header">
+            <h2>Seleccionar tipo de nota</h2>
+            <p class="modal-subtitle">Elige una plantilla para comenzar.</p>
+            <button class="close-modal" id="closeNoteTypeModal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="note-type-options">
+              <div class="note-type-option" data-type="standard">
+                <div class="note-type-icon">📝</div>
+                <div class="note-type-content">
+                  <h3>Nota Estándar</h3>
+                  <p>Nota básica para ideas generales</p>
+                </div>
+              </div>
+              <div class="note-type-option" data-type="checklist">
+                <div class="note-type-icon">✅</div>
+                <div class="note-type-content">
+                  <h3>Listas</h3>
+                  <p>Seguimiento de tareas con casillas</p>
+                </div>
+              </div>
+              <div class="note-type-option" data-type="idea">
+                <div class="note-type-icon">💡</div>
+                <div class="note-type-content">
+                  <h3>Idea / Lluvia de Ideas</h3>
+                  <p>Captura tu pensamiento creativo</p>
+                </div>
+              </div>
+              <div class="note-type-option" data-type="meeting">
+                <div class="note-type-icon">🗓️</div>
+                <div class="note-type-content">
+                  <h3>Reunión</h3>
+                  <p>Documentar discusiones de reuniones</p>
+                </div>
+              </div>
+              <div class="note-type-option" data-type="sticky">
+                <div class="note-type-icon">📌</div>
+                <div class="note-type-content">
+                  <h3>Nota Adhesiva</h3>
+                  <p>Recordatorios rápidos</p>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="cancel-btn" id="cancelNoteType">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modales específicos para cada tipo de nota -->
+
+      <!-- Modal Standard Note -->
+      <div id="standardNoteModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>📝 Nota Estándar</h2>
+            <button class="close-modal" id="closeStandardNote">&times;</button>
+          </div>
+          <form id="standardNoteForm">
+            <div class="form-group">
+              <label for="standardTitle">Título *</label>
+              <input
+                type="text"
+                id="standardTitle"
+                required
+                placeholder="Título de la nota..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="standardContent">Contenido</label>
+              <textarea
+                id="standardContent"
+                rows="4"
+                placeholder="Escribe tu nota aquí..."
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="standardTags">Etiquetas</label>
+              <input
+                type="text"
+                id="standardTags"
+                placeholder="personal, trabajo, ideas..."
+              />
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelStandardNote">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-submit">Guardar Nota</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Checklist -->
+      <div id="checklistModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>✅ Lista</h2>
+            <button class="close-modal" id="closeChecklist">&times;</button>
+          </div>
+          <form id="checklistForm">
+            <div class="form-group">
+              <label for="checklistTitle">Título *</label>
+              <input
+                type="text"
+                id="checklistTitle"
+                required
+                placeholder="Título de la lista..."
+              />
+            </div>
+            <div class="form-group">
+              <label>Elementos</label>
+              <div id="checklistItems">
+                <div class="checklist-item">
+                  <input
+                    type="text"
+                    placeholder="Primer elemento..."
+                    required
+                  />
+                  <button type="button" class="remove-item">&times;</button>
+                </div>
+              </div>
+              <button type="button" id="addChecklistItem" class="add-item-btn">
+                + Agregar Elemento
+              </button>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelChecklist">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-submit">Guardar Lista</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Idea/Brainstorm -->
+      <div id="ideaModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>💡 Idea / Lluvia de Ideas</h2>
+            <button class="close-modal" id="closeIdea">&times;</button>
+          </div>
+          <form id="ideaForm">
+            <div class="form-group">
+              <label for="ideaTitle">Título de la Idea *</label>
+              <input
+                type="text"
+                id="ideaTitle"
+                required
+                placeholder="Tu gran idea..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="ideaDescription">Descripción</label>
+              <textarea
+                id="ideaDescription"
+                rows="4"
+                placeholder="Describe tu idea..."
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="ideaKeyPoints">Puntos Clave</label>
+              <textarea
+                id="ideaKeyPoints"
+                rows="4"
+                placeholder="• Punto 1
+• Punto 2
+• Punto 3"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="ideaPotential">Potencial/Impacto</label>
+              <select id="ideaPotential">
+                <option value="low">Bajo</option>
+                <option value="medium" selected>Medio</option>
+                <option value="high">Alto</option>
+                <option value="breakthrough">Revolucionario</option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelIdea">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-submit">Guardar Idea</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Meeting Note -->
+      <div id="meetingModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>🗓️ Reunión</h2>
+            <button class="close-modal" id="closeMeeting">&times;</button>
+          </div>
+          <form id="meetingForm">
+            <div class="form-group">
+              <label for="meetingTitle">Título de la Reunión *</label>
+              <input
+                type="text"
+                id="meetingTitle"
+                required
+                placeholder="Stand up semanal, Revisión de proyecto..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="meetingDate">Fecha y Hora</label>
+              <input type="datetime-local" id="meetingDate" />
+            </div>
+            <div class="form-group">
+              <label for="meetingAttendees">Asistentes</label>
+              <input
+                type="text"
+                id="meetingAttendees"
+                placeholder="Juan, María, Carlos..."
+              />
+            </div>
+            <div class="form-group">
+              <label for="meetingAgenda">Agenda/Temas</label>
+              <textarea
+                id="meetingAgenda"
+                rows="3"
+                placeholder="1. Tema 1
+2. Tema 2
+3. Tema 3"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="meetingNotes">Notas y Decisiones</label>
+              <textarea
+                id="meetingNotes"
+                rows="4"
+                placeholder="Puntos de discusión clave, decisiones tomadas, tareas..."
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="meetingActions">Elementos de Acción</label>
+              <textarea
+                id="meetingActions"
+                rows="3"
+                placeholder="• @Juan: Tarea 1 (Vence: Fecha)
+• @María: Tarea 2 (Vence: Fecha)"
+              ></textarea>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelMeeting">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-submit">
+                Guardar Nota de Reunión
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal Sticky Note -->
+      <div id="stickyModal" class="modal">
+        <div class="modal-content sticky-modal">
+          <div class="modal-header">
+            <h2>📌 Nota Adhesiva</h2>
+            <button class="close-modal" id="closeSticky">&times;</button>
+          </div>
+          <form id="stickyForm">
+            <div class="form-group">
+              <label for="stickyContent">Nota Rápida *</label>
+              <textarea
+                id="stickyContent"
+                rows="4"
+                required
+                placeholder="Escribe un recordatorio o nota rápida..."
+                maxlength="200"
+              ></textarea>
+              <small class="char-counter">0 / 200 caracteres</small>
+            </div>
+            <div class="form-group">
+              <label for="stickyColor">Color</label>
+              <div class="color-options">
+                <input
+                  type="radio"
+                  name="stickyColor"
+                  value="yellow"
+                  id="yellow"
+                  checked
+                />
+                <label for="yellow" class="color-option yellow"></label>
+                <input type="radio" name="stickyColor" value="pink" id="pink" />
+                <label for="pink" class="color-option pink"></label>
+                <input type="radio" name="stickyColor" value="blue" id="blue" />
+                <label for="blue" class="color-option blue"></label>
+                <input
+                  type="radio"
+                  name="stickyColor"
+                  value="green"
+                  id="green"
+                />
+                <label for="green" class="color-option green"></label>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-cancel" id="cancelSticky">
+                Cancelar
+              </button>
+              <button type="submit" class="btn-submit">Guardar Nota</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Sección Tablas (My Tasks) -->
+      <div class="section-content" id="tablas-section">
+        <div class="tasks-table-container">
+          <table class="tasks-table">
+            <thead>
+              <tr>
+                <th>TÍTULO</th>
+                <th>DESCRIPCIÓN</th>
+                <th>ESTADO</th>
+                <th>PRIORIDAD</th>
+                <th>FECHA</th>
+              </tr>
+            </thead>
+            <tbody id="tasksTableBody">
+              <!-- Las tareas se renderizarán aquí -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sección Tareas (Cards) -->
+      <div class="section-content active" id="tareas-section">
+        <div class="tasks-container-wrapper">
+          <div class="tasks-container" id="tasksContainer">
+            <div class="tasks-grid" id="taskList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección Calendar -->
+      <div class="section-content" id="calendario-section">
+        <div class="calendario-container">
+          <div id="calendario"></div>
+        </div>
+      </div>
+
+      <!-- Sección Dashboard (Solo Gráficas) -->
+      <div class="section-content" id="dashboard-section">
+        <div class="charts-container">
+          <!-- Tarjetas de Estadísticas -->
+          <div class="chart-wrapper stat-wrapper">
+            <div class="stat-icon success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Total de Tareas Completadas</p>
+              <div class="stat-value" id="totalCompleted">142</div>
+              <div class="stat-change positive">
+                <span class="arrow">↗</span>
+                <span class="percentage">+12%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-wrapper stat-wrapper">
+            <div class="stat-icon info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12,6 12,12 16,14"></polyline>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Tiempo Promedio de Desarrollo</p>
+              <div class="stat-value" id="avgTime">
+                2.4 <span class="unit">días</span>
+              </div>
+              <div class="stat-change negative">
+                <span class="arrow">↘</span>
+                <span class="percentage">-5%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-wrapper stat-wrapper">
+            <div class="stat-icon warning">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"
+                ></path>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Tareas Vencidas</p>
+              <div class="stat-value" id="overdueTasks">3</div>
+              <div class="stat-change negative">
+                <span class="arrow">↗</span>
+                <span class="percentage">+1</span>
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <h3 class="chart-title">Evolución de Tareas</h3>
+            <canvas id="lineChart"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <h3 class="chart-title">Distribución por Prioridad</h3>
+            <canvas id="donutChart"></canvas>
+          </div>
+          <div class="chart-wrapper heatmap-wrapper">
+            <div id="heatmap-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección Notas -->
+      <div class="section-content" id="notas-section">
+        <div class="notas-container">
+          <div class="notas-grid" id="notasGrid"></div>
+        </div>
+      </div>
+    </main>
+    <script type="module" src="../src/js/main.js"></script>
+  </body>
+</html>

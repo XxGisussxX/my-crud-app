@@ -1,7 +1,7 @@
 import { toggleTask, deleteTask } from "./logic.js";
 import { getTasks } from "./storage.js";
-import { updateCharts } from "./charts.js";
-import { showConfirmation } from "./confirmation.js";
+import { updateCharts } from "./dashboard/stats.js";
+import { showConfirmation } from "./shared/confirmation.js";
 
 // Función para actualizar las estadísticas del contador
 export function updateStats() {
@@ -40,7 +40,7 @@ export function renderTasks() {
   } else if (filter === "completed") {
     filteredTasks = tasks.filter((t) => t.completed);
   }
-   // Ordenar tareas: activas primero, luego completadas
+  // Ordenar tareas: activas primero, luego completadas
   filteredTasks.sort((a, b) => a.completed - b.completed);
   list.innerHTML = "";
 
