@@ -378,8 +378,7 @@ function initMeetingNoteModal() {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      const actionItemsText =
-        document.getElementById("meetingActions").value;
+      const actionItemsText = document.getElementById("meetingActions").value;
       const actionItems = actionItemsText
         .split("\n")
         .map((item) => item.trim())
@@ -513,6 +512,62 @@ function populateNoteModal(note) {
       }
       break;
   }
+}
+
+/**
+ * Initialize task modal
+ */
+export function initTaskModal() {
+  const modal = document.getElementById("taskModal");
+  const addBtn = document.getElementById("addBtn");
+  const closeModal = document.getElementById("closeModal");
+  const cancelBtn = document.getElementById("cancelBtn");
+  const taskForm = document.getElementById("taskForm");
+
+  // Add button
+  if (addBtn) {
+    addBtn.addEventListener("click", () => {
+      const activeSection = document.querySelector(".section-content.active");
+      if (activeSection && activeSection.id === "notas-section") {
+        openNoteTypeModal();
+      } else {
+        modal.style.display = "flex";
+      }
+    });
+  }
+
+  // Close modal
+  if (closeModal) {
+    closeModal.addEventListener("click", () => {
+      modal.style.display = "none";
+      if (taskForm) taskForm.reset();
+    });
+  }
+
+  if (cancelBtn) {
+    cancelBtn.addEventListener("click", () => {
+      modal.style.display = "none";
+      if (taskForm) taskForm.reset();
+    });
+  }
+
+  // Click outside modal
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        modal.style.display = "none";
+        if (taskForm) taskForm.reset();
+      }
+    });
+  }
+}
+
+/**
+ * Initialize all modals (task + note modals)
+ */
+export function initModals() {
+  initTaskModal();
+  initNoteModals();
 }
 
 /**
