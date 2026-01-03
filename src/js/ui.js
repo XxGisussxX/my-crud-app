@@ -1,6 +1,6 @@
 import { toggleTask, deleteTask } from "./logic.js";
 import { getTasks } from "./storage.js";
-import { updateCharts } from "./charts.js";
+import { updateCharts } from "./dashboard/stats.js";
 import { showConfirmation } from "./confirmation.js";
 
 // Función para actualizar las estadísticas del contador
