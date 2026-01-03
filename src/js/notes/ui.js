@@ -269,7 +269,6 @@ function renderMeetingNote(note, formattedDate, size) {
       <div class="meeting-header">
         <div class="meeting-title-section">
           <h3 class="meeting-title">${escapeHtml(note.title)}</h3>
-          <div class="meeting-date-time">${formattedDate}</div>
         </div>
         <div class="note-actions">
           <button class="note-action-btn edit-note" title="Editar">✏️</button>
@@ -307,6 +306,7 @@ function renderMeetingNote(note, formattedDate, size) {
             : ""
         }
       </div>
+      <div class="note-date">${formattedDate}</div>
     </div>
   `;
 }
