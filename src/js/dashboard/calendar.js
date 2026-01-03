@@ -59,7 +59,7 @@ function tasksToEvents(tasks) {
  * Initialize calendar
  */
 export function initCalendar() {
-  const calendarEl = document.getElementById("calendar");
+  const calendarEl = document.getElementById("calendario");
   if (!calendarEl) return;
 
   const tasks = getTasks();
@@ -67,20 +67,20 @@ export function initCalendar() {
 
   calendarInstance = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
-    locale: "es",
-    plugins: ["dayGrid", "interaction"],
-    events,
     headerToolbar: {
       left: "prev,next today",
       center: "title",
-      right: "dayGridMonth,dayGridWeek,dayGridDay",
+      right: "dayGridMonth,timeGridWeek,timeGridDay",
     },
+    locale: "es",
+    events,
     eventClick: (info) => {
       showEventDetails(info.event);
     },
     dayCellDidMount: (info) => {
       info.el.style.cursor = "pointer";
     },
+    height: "auto",
   });
 
   calendarInstance.render();

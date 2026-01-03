@@ -13,6 +13,7 @@ import {
 import { SELECTORS, PRIORITY_LABELS, PRIORITIES } from "../shared/constants.js";
 import { formatDate } from "../shared/utils.js";
 import { updateCharts } from "../dashboard/stats.js";
+import { showConfirmation } from "../shared/confirmation.js";
 
 /**
  * Update task statistics display
@@ -39,9 +40,17 @@ export function renderTasks() {
   if (!taskList) return;
 
   const activeFilterBtn = document.querySelector(".filter-btn.active");
-  const filter = activeFilterBtn
+  const filterText = activeFilterBtn
     ? activeFilterBtn.textContent.trim().toLowerCase()
-    : "all";
+    : "todo";
+
+  // Map Spanish text to filter values
+  const filterMap = {
+    todo: "all",
+    activas: "active",
+    completadas: "completed",
+  };
+  const filter = filterMap[filterText] || "all";
 
   let tasks = getFilteredTasks(filter);
   tasks.sort((a, b) => a.completed - b.completed);
@@ -131,7 +140,22 @@ export function renderTasksTable() {
   const tbody = document.getElementById("tasksTableBody");
   if (!tbody) return;
 
-  const tasks = getAllTasks();
+  const activeFilterBtn = document.querySelector(".filter-btn.active");
+  const filterText = activeFilterBtn
+    ? activeFilterBtn.textContent.trim().toLowerCase()
+    : "todo";
+
+  // Map Spanish text to filter values
+  const filterMap = {
+    todo: "all",
+    activas: "active",
+    completadas: "completed",
+  };
+  const filter = filterMap[filterText] || "all";
+
+  let tasks = getFilteredTasks(filter);
+  // Sort: active tasks first, then completed
+  tasks.sort((a, b) => a.completed - b.completed);
   tbody.innerHTML = "";
 
   if (tasks.length === 0) {
@@ -178,16 +202,18 @@ export function createTaskRow(task) {
     </td>
     <td class="table-date">${dateDisplay}</td>
     <td>
-      <button class="task-action-btn task-toggle" data-id="${
-        task.id
-      }" style="background: rgba(59, 130, 246, 0.1); border: none; color: #3b82f6; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">
-        ${task.completed ? "✓" : "Marcar"}
-      </button>
-      <button class="task-action-btn task-delete" data-id="${
-        task.id
-      }" style="background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 4px;">
-        Eliminar
-      </button>
+      <div style="display: flex; gap: 8px;">
+        <button class="task-action-btn task-toggle" data-id="${
+          task.id
+        }" style="background: rgba(59, 130, 246, 0.1); border: none; color: #3b82f6; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+          ${task.completed ? "✓" : "Marcar"}
+        </button>
+        <button class="task-action-btn task-delete" data-id="${
+          task.id
+        }" style="background: rgba(239, 68, 68, 0.1); border: none; color: #ef4444; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+          Eliminar
+        </button>
+      </div>
     </td>
   `;
 
@@ -206,12 +232,19 @@ export function createTaskRow(task) {
 
   if (deleteBtn) {
     deleteBtn.addEventListener("click", () => {
-      if (confirm("¿Está seguro de que desea eliminar esta tarea?")) {
-        deleteTask(task.id);
-        renderTasksTable();
-        updateStats();
-        updateCharts();
-      }
+      showConfirmation({
+        title: "Eliminar tarea",
+        message: `¿Estás seguro de que deseas eliminar "${task.text}"?`,
+        type: "delete",
+        confirmText: "Eliminar",
+        cancelText: "Cancelar",
+        onConfirm: () => {
+          deleteTask(task.id);
+          renderTasksTable();
+          updateStats();
+          updateCharts();
+        },
+      });
     });
   }
 

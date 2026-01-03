@@ -212,6 +212,80 @@
   min-width: 120px;
 }
 
+/* Confirm Button Styles */
+.btn-confirm {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  color: #fff;
+}
+
+.btn-confirm.btn-delete {
+  background: var(--color-danger);
+}
+
+.btn-confirm.btn-delete:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+  background: #ff3333;
+}
+
+.btn-confirm.btn-edit {
+  background: var(--color-primary);
+}
+
+.btn-confirm.btn-edit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  background: var(--color-primary-dark);
+}
+
+.btn-confirm.btn-success {
+  background: var(--color-success);
+}
+
+.btn-confirm.btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  background: #059669;
+}
+
+.btn-confirm.btn-warning {
+  background: #fb923c;
+}
+
+.btn-confirm.btn-warning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.4);
+  background: #f97316;
+}
+
+.btn-confirm.btn-logout {
+  background: #8b5cf6;
+}
+
+.btn-confirm.btn-logout:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+  background: #7c3aed;
+}
+
+.btn-confirm.btn-clear {
+  background: #ec4899;
+}
+
+.btn-confirm.btn-clear:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+  background: #db2777;
+}
+
 /* Note Type Modal */
 .note-type-modal {
   max-width: 450px;

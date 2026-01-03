@@ -156,7 +156,7 @@ function updateLineChart() {
         },
         x: {
           grid: {
-            display: false,
+            display: "flex"
           },
         },
       },
