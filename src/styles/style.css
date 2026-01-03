@@ -190,7 +190,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow-y: auto;
+  overflow: hidden;
   transition: all 0.3s ease;
 }
 
@@ -202,6 +202,9 @@ body {
   gap: 20px;
   border-bottom: 1px solid #e5e7eb;
   background: #ffffff;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* Botón hamburguesa */
@@ -261,7 +264,7 @@ body {
 
 .search-bar {
   flex: 1;
-  max-width: 500px;
+  max-width: 700px;
   position: relative;
 }
 
@@ -371,6 +374,9 @@ body {
   max-height: 100vh;
   display: flex;
   align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .tasks-container {
@@ -400,13 +406,6 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 180px;
-}
-
-.task-card:hover {
-  transform: translateY(-4px);
-  border-color: #d1d5db;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
-  background: #ffffff;
 }
 
 .task-header {
@@ -463,86 +462,130 @@ body {
   opacity: 0.5;
 }
 
+/* ============================================
+   DASHBOARD LAYOUT - CSS GRID
+   ============================================ */
+
 /* Charts Container */
 .charts-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 120px auto;
-  gap: 8px 16px;
-  row-gap: 4px;
-  padding: 20px;
+  grid-template-rows: 110px 250px 1fr;
+  gap: 8px;
+  padding: 12px;
   background: #f9fafb;
-  height: calc(100vh - 80px);
-  overflow-y: auto;
-  overflow-x: hidden;
+  height: 100%;
+  overflow: hidden;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* Las primeras 3 tarjetas (estadísticas) ocupan cada una su columna en la fila 1 */
+/* ============================================
+   FILA 1 - ESTADÍSTICAS (3 COLUMNAS IGUALES)
+   ============================================ */
+
 .chart-wrapper.stat-wrapper:nth-child(1) {
   grid-column: 1;
   grid-row: 1;
 }
+
 .chart-wrapper.stat-wrapper:nth-child(2) {
   grid-column: 2;
   grid-row: 1;
 }
+
 .chart-wrapper.stat-wrapper:nth-child(3) {
   grid-column: 3;
   grid-row: 1;
 }
 
-/* Evolución de Tareas ocupa 2 columnas en la fila 2 */
-.chart-wrapper:nth-child(4) {
+/* ============================================
+   FILA 2 - HEATMAP + DISTRIBUCIÓN POR PRIORIDAD
+   ============================================ */
+
+/* Heatmap - 2 columnas */
+.chart-wrapper:nth-child(6) {
   grid-column: 1 / span 2;
   grid-row: 2;
 }
 
-/* Distribución por Prioridad ocupa 1 columna en la fila 2 */
+/* Distribución por Prioridad - 1 columna */
 .chart-wrapper:nth-child(5) {
-  grid-column: 3;
+  grid-column: 3 / span 1;
   grid-row: 2;
 }
 
-/* Responsive: Ajuste del contenedor para pantallas pequeñas */
+/* ============================================
+   FILA 3 - EVOLUCIÓN DE TAREAS (TODO EL ANCHO)
+   ============================================ */
+
+/* Evolución de Tareas - 3 columnas completas */
+.chart-wrapper:nth-child(4) {
+  grid-column: 1 / span 3;
+  grid-row: 3;
+}
+
+/* ============================================
+   RESPONSIVE - TABLET (max-width: 1200px)
+   ============================================ */
+
 @media (max-width: 1200px) {
   .charts-container {
     grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto auto auto auto auto;
     gap: 16px;
+    padding: 16px;
   }
 
-  /* Estadísticas: 2 arriba, 1 abajo */
+  /* Fila 1: Primeras 2 estadísticas */
   .chart-wrapper.stat-wrapper:nth-child(1) {
-    grid-column: 1;
+    grid-column: 1 / span 1;
     grid-row: 1;
   }
   .chart-wrapper.stat-wrapper:nth-child(2) {
-    grid-column: 2;
+    grid-column: 2 / span 1;
     grid-row: 1;
   }
+
+  /* Fila 2: Tercera estadística */
   .chart-wrapper.stat-wrapper:nth-child(3) {
     grid-column: 1 / span 2;
     grid-row: 2;
   }
 
-  /* Gráficas: cada una en su fila */
+  /* Fila 3: Evolución de Tareas */
   .chart-wrapper:nth-child(4) {
     grid-column: 1 / span 2;
     grid-row: 3;
   }
+
+  /* Fila 4: Distribución por Prioridad */
   .chart-wrapper:nth-child(5) {
     grid-column: 1 / span 2;
     grid-row: 4;
   }
+
+  /* Fila 5: Heatmap */
+  .chart-wrapper:nth-child(6) {
+    grid-column: 1 / span 2;
+    grid-row: 5;
+  }
 }
+
+/* ============================================
+   RESPONSIVE - MÓVIL (max-width: 768px)
+   ============================================ */
 
 @media (max-width: 768px) {
   .charts-container {
     grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, auto);
     gap: 12px;
-    padding: 16px;
+    padding: 12px;
   }
 
-  /* En móvil: todo en una columna */
+  /* Todo en una columna - orden vertical */
   .chart-wrapper.stat-wrapper:nth-child(1) {
     grid-column: 1;
     grid-row: 1;
@@ -564,19 +607,23 @@ body {
     grid-column: 1;
     grid-row: 5;
   }
+  .chart-wrapper:nth-child(6) {
+    grid-column: 1;
+    grid-row: 6;
+  }
 }
 
 /* Chart Wrapper - Usado tanto para gráficas como para estadísticas */
 .chart-wrapper {
   background: #ffffff;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  height: fit-content;
-  max-height: 350px;
+  height: 100%;
+  overflow: hidden;
 }
 
 /* Stat Wrapper - Tarjetas de estadísticas */
@@ -585,8 +632,7 @@ body {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  max-height: 90px;
-  height: auto;
+  height: 100px;
   min-width: 0;
   max-width: 100%;
 }
@@ -686,8 +732,8 @@ body {
 
 .chart-wrapper canvas {
   flex: 1;
-  max-height: 220px !important;
-  height: 220px !important;
+  max-height: 180px !important;
+  height: 180px !important;
 }
 
 .task-footer {
@@ -873,7 +919,7 @@ body {
   .search-bar {
     flex: 1;
     min-width: 0;
-    max-width: none;
+    max-width: 450px;
   }
 
   .search-bar input {
@@ -930,14 +976,7 @@ body {
 
   .tasks-container-wrapper {
     padding: 16px 20px;
-    padding-bottom: 100px; /* Espacio para el botón flotante */
   }
-
-  /* Agregar padding inferior a todas las secciones de contenido en móvil */
-  .section-content {
-    padding-bottom: 100px;
-  }
-
   .charts-container {
     padding-bottom: 80px;
   }
@@ -1069,11 +1108,14 @@ body {
   transition: all 0.2s;
 }
 
-/* X posicionada en esquina superior derecha para modales de notas */
+/* X posicionada en esquina superior derecha para todos los modales */
+#taskModal .close-modal,
 #standardNoteModal .close-modal,
 #checklistModal .close-modal,
 #ideaModal .close-modal,
-#meetingModal .close-modal {
+#meetingModal .close-modal,
+#stickyModal .close-modal,
+#noteTypeModal .close-modal {
   position: absolute;
   top: 12px;
   right: 12px;
@@ -1083,19 +1125,25 @@ body {
   color: #9ca3af;
 }
 
+#taskModal .close-modal:hover,
 #standardNoteModal .close-modal:hover,
 #checklistModal .close-modal:hover,
 #ideaModal .close-modal:hover,
-#meetingModal .close-modal:hover {
+#meetingModal .close-modal:hover,
+#stickyModal .close-modal:hover,
+#noteTypeModal .close-modal:hover {
   background: #f3f4f6;
   color: #374151;
 }
 
 /* Ajustar header cuando X está posicionada absolutamente */
+#taskModal .modal-header,
 #standardNoteModal .modal-header,
 #checklistModal .modal-header,
 #ideaModal .modal-header,
-#meetingModal .modal-header {
+#meetingModal .modal-header,
+#stickyModal .modal-header,
+#noteTypeModal .modal-header {
   justify-content: flex-start;
   padding-right: 50px; /* Dar espacio para la X */
 }
@@ -1206,7 +1254,8 @@ body {
   display: none;
   flex: 1;
   flex-direction: column;
-  overflow-y: auto;
+  height: calc(100vh - 80px);
+  overflow: hidden;
 }
 
 .section-content.active {
@@ -1230,6 +1279,9 @@ body {
   padding: 40px;
   flex: 1;
   overflow-y: auto;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .tasks-table {
@@ -1256,10 +1308,6 @@ body {
 .tasks-table tbody tr {
   border-bottom: 1px solid #e5e7eb;
   transition: background-color 0.2s;
-}
-
-.tasks-table tbody tr:hover {
-  background-color: #f9fafb;
 }
 
 .tasks-table tbody tr.completed {
@@ -1419,6 +1467,9 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 #calendario {
@@ -2121,6 +2172,32 @@ body {
   padding: 40px 60px;
   background: #f9fafb;
   min-height: calc(100vh - 80px);
+  max-height: calc(100vh - 80px);
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Estilo del scrollbar */
+.notas-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.notas-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.notas-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.notas-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .notas-grid {
@@ -2129,20 +2206,37 @@ body {
   gap: 24px;
   max-width: 1200px;
   margin: 0 auto;
+  grid-auto-flow: dense;
+  grid-auto-rows: 150px;
 }
 
 .note-card {
   background: #ffffff;
   border-radius: 16px;
   padding: 20px;
-  min-height: 200px;
+  min-height: auto;
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  grid-row: span 1;
+}
+
+/* Notas con más contenido ocupan más espacio */
+.note-card[data-size="medium"] {
+  grid-row: span 2;
+}
+
+.note-card[data-size="large"] {
+  grid-row: span 3;
+}
+
+/* Notas anchas */
+.note-card[data-wide="true"] {
+  grid-column: span 2;
 }
 
 .note-card:hover {
@@ -2218,6 +2312,9 @@ body {
 }
 
 .note-date {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
   font-size: 12px;
   color: #9ca3af;
   font-weight: 500;
@@ -2244,8 +2341,6 @@ body {
 }
 
 .checklist-progress {
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 12px;
@@ -2363,20 +2458,160 @@ body {
 }
 
 /* Estilos específicos para meeting notes */
-.meeting-card .note-title {
-  color: #0ea5e9;
+.meeting-card {
+  display: flex !important;
+  flex-direction: column;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+  color: #ffffff;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35) !important;
+  border: none;
+  grid-row: span 2;
 }
 
-.meeting-date {
+.meeting-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 0;
+}
+
+.meeting-title-section {
+  flex: 1;
+}
+
+.meeting-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.meeting-date-time {
   font-size: 12px;
-  color: #0ea5e9;
+  color: #cbd5e1;
+  margin-bottom: 8px;
   font-weight: 500;
 }
 
-.attendees {
-  font-size: 13px;
-  color: #6b7280;
+.attendees-section {
   margin-bottom: 8px;
+  padding: 0;
+}
+
+.avatars-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.avatar-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  background: #0f172a;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.avatar-more {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(148, 163, 184, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #e2e8f0;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.meeting-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.agenda-section,
+.action-items-section {
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  border-left: 3px solid #0ea5e9;
+}
+
+.agenda-text {
+  font-size: 12px;
+  color: #e2e8f0;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.action-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.action-items-list li {
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.action-items-list li:last-child {
+  margin-bottom: 0;
+}
+
+.meeting-notes {
+  font-size: 13px;
+  color: #cbd5e1;
+}
+
+.meeting-notes p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.meeting-card .note-actions {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.meeting-card:hover .note-actions {
+  opacity: 1;
 }
 
 .agenda-preview {
@@ -2387,9 +2622,19 @@ body {
 
 /* Estilos específicos para sticky notes */
 .sticky-card {
-  min-height: 150px;
+  min-height: auto;
   position: relative;
   transform: rotate(-1deg);
+  grid-row: span 1;
+}
+
+/* Sticky notes con más contenido */
+.sticky-card[data-size="medium"] {
+  grid-row: span 2;
+}
+
+.sticky-card[data-size="large"] {
+  grid-row: span 2;
 }
 
 .sticky-card:nth-child(even) {
@@ -2431,7 +2676,7 @@ body {
 .sticky-pin {
   position: absolute;
   top: 10px;
-  right: 10px;
+  left: 10px;
   font-size: 18px;
   opacity: 0.7;
 }
@@ -2590,5 +2835,198 @@ mark {
   mark {
     padding: 0 1px;
     font-size: inherit;
+  }
+}
+
+/* ============================================
+   ESTILOS PARA HEAT MAP
+   ============================================ */
+
+.heatmap-wrapper {
+  grid-column: 1 / span 3;
+  grid-row: 3;
+  height: 100%;
+  margin: 0;
+  padding: 4px;
+}
+
+#heatmap-container {
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.heatmap-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.heatmap-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 1 auto;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 3px;
+  flex: 1;
+}
+
+.heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: #ebedf0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.1);
+  z-index: 10;
+  position: relative;
+}
+
+/* Niveles de intensidad del heat map */
+.heatmap-cell.level-0 {
+  background-color: #ebedf0;
+}
+
+.heatmap-cell.level-1 {
+  background-color: #9be9a8;
+}
+
+.heatmap-cell.level-2 {
+  background-color: #40c463;
+}
+
+.heatmap-cell.level-3 {
+  background-color: #30a14e;
+}
+
+.heatmap-cell.level-4 {
+  background-color: #216e39;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 4px;
+  gap: 6px;
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.legend-text {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.legend-cells {
+  display: flex;
+  gap: 2px;
+}
+
+.legend-cells .heatmap-cell {
+  width: 10px;
+  height: 10px;
+}
+
+/* Nuevos estilos para heatmap profesional */
+.heatmap-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.heatmap-months {
+  display: flex;
+  gap: 0;
+  padding: 0 0 8px 20px;
+  margin-bottom: 0;
+  width: 100%;
+  justify-content: space-around;
+}
+
+.month-label {
+  font-size: 11px;
+  color: #9ca3af;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.heatmap-main {
+  display: grid;
+  grid-template-columns: 20px repeat(13, 1fr);
+  gap: 3px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.heatmap-days {
+  display: flex;
+  flex-direction: column;
+  grid-template-rows: repeat(7, 12px);
+  gap: 3px;
+  padding-top: 0;
+  grid-column: 1;
+}
+
+.day-label {
+  font-size: 10px;
+  color: #9ca3af;
+  height: 12px;
+  line-height: 12px;
+  text-align: right;
+  width: 16px;
+  font-weight: 500;
+}
+
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  grid-template-rows: repeat(7, 12px);
+  gap: 3px;
+  grid-column: 2 / -1;
+  align-self: start;
+}
+
+/* Responsive para el heat map */
+@media (max-width: 1200px) {
+  .heatmap-wrapper {
+    grid-column: 1 / span 2;
+    grid-row: 5;
+  }
+}
+
+@media (max-width: 768px) {
+  .heatmap-wrapper {
+    grid-column: 1;
+    grid-row: 6;
+  }
+
+  .heatmap-grid {
+    grid-template-columns: repeat(13, 1fr) !important;
+  }
+
+  .heatmap-cell {
+    width: 8px;
+    height: 8px;
+  }
+
+  .heatmap-title {
+    font-size: 16px;
   }
 }

@@ -79,13 +79,12 @@ export function initCalendar() {
       headerToolbar: {
         left: "prev,next today",
         center: "title",
-        right: "dayGridMonth,timeGridWeek,listWeek",
+        right: "dayGridMonth,timeGridWeek",
       },
       buttonText: {
         today: "Hoy",
         month: "Mes",
         week: "Semana",
-        list: "Lista",
       },
       height: "100%",
       expandRows: true,
