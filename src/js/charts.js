@@ -297,6 +297,161 @@ function updateDashboardStats() {
   }
 }
 
+// Función para preparar datos del heat map (últimos 90 días)
+function prepareHeatMapData(tasks) {
+  const days = [];
+  const today = new Date();
+
+  // Generar últimos 90 días
+  for (let i = 89; i >= 0; i--) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const dateStr = date.toISOString().split("T")[0];
+
+    days.push({
+      date: dateStr,
+      count: 0,
+      day: date.getDay(),
+      week: Math.floor(i / 7),
+    });
+  }
+
+  // Contar tareas completadas por día
+  tasks.forEach((task) => {
+    if (task.completed && task.completedAt) {
+      const dayData = days.find((d) => d.date === task.completedAt);
+      if (dayData) {
+        dayData.count++;
+      }
+    }
+  });
+
+  return days;
+}
+
+// Función para renderizar el heat map
+function renderHeatMap() {
+  const heatmapContainer = document.getElementById("heatmap-container");
+  if (!heatmapContainer) return;
+
+  const tasks = getTasks();
+  const heatMapData = prepareHeatMapData(tasks);
+
+  // Organizar datos por semanas y días
+  const weeks = Math.ceil(heatMapData.length / 7);
+  const weeksData = [];
+  
+  for (let week = 0; week < weeks; week++) {
+    weeksData[week] = [];
+    for (let day = 0; day < 7; day++) {
+      const dataIndex = week * 7 + day;
+      if (dataIndex < heatMapData.length) {
+        weeksData[week][day] = heatMapData[dataIndex];
+      }
+    }
+  }
+
+  // Generar etiquetas de meses con mejor alineación
+  const monthLabels = [];
+  const monthPositions = {};
+  const currentMonth = new Date().getMonth();
+  const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 
+                     'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  
+  // Calcular posiciones exactas de los cambios de mes
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 89);
+  
+  let lastMonth = null;
+  for (let i = 0; i < heatMapData.length; i++) {
+    const date = new Date(heatMapData[i].date);
+    const monthKey = date.getMonth();
+    
+    // Registrar la primera ocurrencia de cada mes
+    if (monthKey !== lastMonth) {
+      // Calcular semana aproximada
+      const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
+      const weekStart = Math.floor(i / 7);
+      
+      monthLabels.push({
+        name: monthNames[monthKey],
+        week: weekStart
+      });
+      lastMonth = monthKey;
+    }
+  }
+  
+  // Crear spans distribuidos por semanas
+  const monthSpans = monthLabels.slice(0, 3).map(m => m.name);
+
+  let html = `
+    <div class="heatmap-title">Actividad de los últimos 90 días</div>
+    <div class="heatmap-content">
+      <div class="heatmap-months">
+        ${monthSpans.map(month => `<span class="month-label">${month}</span>`).join('')}
+      </div>
+      <div class="heatmap-main">
+        <div class="heatmap-days">
+          <span class="day-label">L</span>
+          <span class="day-label">M</span>
+          <span class="day-label">M</span>
+          <span class="day-label">J</span>
+          <span class="day-label">V</span>
+          <span class="day-label">S</span>
+          <span class="day-label">D</span>
+        </div>
+        <div class="heatmap-grid">`;
+
+  // Generar celdas del heat map
+  heatMapData.forEach((day, index) => {
+    const intensity = getHeatMapIntensity(day.count);
+    const date = new Date(day.date);
+    const dayName = date.toLocaleDateString("es-ES", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+    });
+
+    html += `
+      <div 
+        class="heatmap-cell ${intensity}" 
+        title="${day.count} tareas completadas el ${dayName}"
+        data-count="${day.count}"
+        data-date="${day.date}">
+      </div>
+    `;
+  });
+
+  html += `
+        </div>
+      </div>
+      <div class="heatmap-legend">
+        <span class="legend-text">Menos</span>
+        <div class="legend-cells">
+          <div class="heatmap-cell level-0"></div>
+          <div class="heatmap-cell level-1"></div>
+          <div class="heatmap-cell level-2"></div>
+          <div class="heatmap-cell level-3"></div>
+          <div class="heatmap-cell level-4"></div>
+        </div>
+        <span class="legend-text">Más</span>
+      </div>
+    </div>
+  `;
+
+  heatmapContainer.innerHTML = html;
+}
+
+// Función para determinar la intensidad del color
+function getHeatMapIntensity(count) {
+  if (count === 0) return "level-0";
+  if (count <= 2) return "level-1";
+  if (count <= 4) return "level-2";
+  if (count <= 6) return "level-3";
+  return "level-4";
+}
+
 // Función para calcular tiempo promedio de completación (simulada)
 function calculateAverageCompletionTime(completedTasks) {
   if (completedTasks.length === 0) return "0.0";
@@ -337,13 +492,14 @@ function renderTasks() {
   updateDashboardStats();
 }
 
-// Actualizar ambas gráficas
+// Actualizar ambas gráficas y heat map
 export function updateCharts() {
   updateLineChart();
   updateDonutChart();
+  renderHeatMap();
 }
 
-// Inicializar gráficas
+// Inicializar gráficas y heat map
 export function initCharts() {
   migrateTasks(); // Migrar tareas antiguas si es necesario
   updateCharts();

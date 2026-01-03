@@ -124,11 +124,45 @@ function renderNotes() {
 function renderNoteCard(note) {
   const formattedDate = new Date(note.createdAt).toLocaleDateString();
 
+  // Función para calcular el tamaño de la nota según su contenido
+  function getContentSize(type, content, specificData) {
+    if (type === "sticky") {
+      const length = content?.length || 0;
+      if (length > 100) return "medium";
+      return "small";
+    }
+    if (type === "standard") {
+      const contentLength = content?.length || 0;
+      const tagsCount = specificData?.tags?.length || 0;
+      if (contentLength > 150 || tagsCount > 3) return "medium";
+      if (contentLength > 80) return "small";
+      return "small";
+    }
+    if (type === "idea") {
+      const contentLength = content?.length || 0;
+      const keyPointsCount = specificData?.keyPoints?.length || 0;
+      // Si hay puntos clave, al menos medium para evitar corte
+      if (keyPointsCount > 4 || contentLength > 220) return "large";
+      if (keyPointsCount > 0 || contentLength > 120) return "medium";
+      return "small";
+    }
+    // Checklist siempre tamaño medium para mantener consistencia
+    if (type === "checklist") {
+      return "medium";
+    }
+    if (type === "meeting") {
+      return "medium";
+    }
+    return "small";
+  }
+
+  const size = getContentSize(note.type, note.content, note.specificData);
+
   switch (note.type) {
     case "standard":
       return `<div class="note-card" style="background-color: ${
         note.color
-      }" data-note-id="${note.id}">
+      }" data-note-id="${note.id}" data-size="${size}">
         <div class="note-header">
           <h3 class="note-title">${note.title}</h3>
           <div class="note-actions">
@@ -146,13 +180,14 @@ function renderNoteCard(note) {
       </div>`;
 
     case "sticky":
-      return `<div class="note-card sticky-card" style="background-color: ${note.color}" data-note-id="${note.id}">
+      return `<div class="note-card sticky-card" style="background-color: ${note.color}" data-note-id="${note.id}" data-size="${size}">
         <div class="note-actions">
           <button class="note-action-btn edit-note" title="Edit">✏️</button>
           <button class="note-action-btn delete-note" title="Delete">🗑️</button>
         </div>
         <div class="sticky-content"><p>${note.content}</p></div>
         <div class="sticky-pin">📌</div>
+        <div class="note-date">${formattedDate}</div>
       </div>`;
 
     case "checklist":
@@ -162,7 +197,9 @@ function renderNoteCard(note) {
       const progressText =
         totalItems > 0 ? `${completedItems}/${totalItems}` : "0/0";
 
-      return `<div class="note-card checklist-card" data-note-id="${note.id}">
+      return `<div class="note-card checklist-card" data-note-id="${
+        note.id
+      }" data-size="${size}">
         <div class="note-header">
           <h3 class="note-title">${note.title}</h3>
           <div class="note-actions">
@@ -208,7 +245,9 @@ function renderNoteCard(note) {
       const keyPoints = note.specificData?.keyPoints || [];
       const potential = note.specificData?.potential || "normal";
 
-      return `<div class="note-card idea-card" data-note-id="${note.id}">
+      return `<div class="note-card idea-card" data-note-id="${
+        note.id
+      }" data-size="${size}">
         <div class="note-header">
           <h3 class="note-title">${note.title}</h3>
           <div class="note-actions">
@@ -250,27 +289,94 @@ function renderNoteCard(note) {
         ? new Date(note.specificData.date).toLocaleString()
         : "";
       const agenda = note.specificData?.agenda || "";
+      const actionItems = note.specificData?.actionItems || [];
 
-      return `<div class="note-card meeting-card" data-note-id="${note.id}">
-        <div class="note-header">
-          <h3 class="note-title">${note.title}</h3>
+      // Generar avatares usando DiceBear (iniciales) con degradado
+      const attendeeList = attendees
+        ? attendees
+            .split(",")
+            .map((a) => a.trim())
+            .filter((a) => a.length > 0)
+        : [];
+
+      const avatarUrl = (seed) =>
+        `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+          seed || "Guest"
+        )}&backgroundType=gradientLinear&radius=50&scale=110&fontSize=38&chars=2`;
+
+      const avatarsHTML = (attendeeList.length ? attendeeList : ["Team"])
+        .slice(0, 4)
+        .map((name) => {
+          const safeName = name || "Team";
+          return `<img class="avatar-img" src="${avatarUrl(
+            safeName
+          )}" alt="${safeName}" title="${safeName}" loading="lazy">`;
+        })
+        .join("");
+
+      const moreAttendees =
+        attendeeList.length > 4
+          ? `<div class="avatar-more">+${attendeeList.length - 4}</div>`
+          : "";
+
+      return `<div class="note-card meeting-card" data-note-id="${
+        note.id
+      }" data-size="medium">
+        <div class="meeting-header">
+          <div class="meeting-title-section">
+            <h3 class="meeting-title">${note.title}</h3>
+          </div>
           <div class="note-actions">
             <button class="note-action-btn edit-note" title="Edit">✏️</button>
             <button class="note-action-btn delete-note" title="Delete">🗑️</button>
           </div>
         </div>
-        <div class="note-content">
-          ${meetingDate ? `<div class="meeting-date">${meetingDate}</div>` : ""}
+        
+        <div class="attendees-section">
+          <div class="avatars-group">
+            ${avatarsHTML}
+            ${moreAttendees}
+          </div>
+        </div>
+        
+        <div class="meeting-content">
           ${
-            attendees
-              ? `<div class="attendees">Attendees: ${attendees}</div>`
+            agenda
+              ? `<div class="agenda-section">
+            <div class="section-label">AGENDA</div>
+            <p class="agenda-text">${agenda}</p>
+          </div>`
               : ""
           }
-          ${agenda ? `<div class="agenda-preview">${agenda}</div>` : ""}
-          ${note.content ? `<p>${note.content}</p>` : ""}
+          
+          ${
+            actionItems.length > 0
+              ? `<div class="action-items-section">
+            <div class="section-label">ACTION ITEMS</div>
+            <ul class="action-items-list">
+              ${actionItems
+                .slice(0, 3)
+                .map((item) => `<li>• ${item}</li>`)
+                .join("")}
+              ${
+                actionItems.length > 3
+                  ? `<li>• +${actionItems.length - 3} more items</li>`
+                  : ""
+              }
+            </ul>
+          </div>`
+              : ""
+          }
+          
+          ${
+            note.content
+              ? `<div class="meeting-notes"><p>${note.content}</p></div>`
+              : ""
+          }
         </div>
+        
         <div class="note-footer">
-          <div class="note-date">${formattedDate}</div>
+          ${meetingDate ? `<div class="note-date">${meetingDate}</div>` : ""}
         </div>
       </div>`;
 
@@ -350,6 +456,142 @@ function initFilters() {
       }
     });
   });
+}
+
+// Funcionalidad de búsqueda
+function initSearch() {
+  const searchInput = document.querySelector(".search-bar input");
+  if (!searchInput) return;
+
+  let searchTimeout;
+
+  searchInput.addEventListener("input", (e) => {
+    clearTimeout(searchTimeout);
+
+    // Añadir indicador de búsqueda
+    const searchBar = document.querySelector(".search-bar");
+    searchBar.classList.add("searching");
+
+    searchTimeout = setTimeout(() => {
+      const query = e.target.value.toLowerCase().trim();
+      performSearch(query);
+      searchBar.classList.remove("searching");
+    }, 300);
+  });
+}
+
+function performSearch(query) {
+  const activeSection = document.querySelector(".section-content.active");
+  if (!activeSection) return;
+
+  switch (activeSection.id) {
+    case "tareas-section":
+      searchTasks(query);
+      break;
+    case "tablas-section":
+      searchTasksTable(query);
+      break;
+    case "notas-section":
+      searchNotes(query);
+      break;
+    default:
+      break;
+  }
+}
+
+function searchTasks(query) {
+  const taskCards = document.querySelectorAll(".task-card");
+
+  taskCards.forEach((card) => {
+    const title =
+      card.querySelector(".task-title")?.textContent.toLowerCase() || "";
+    const description =
+      card.querySelector(".task-description")?.textContent.toLowerCase() || "";
+
+    if (query === "" || title.includes(query) || description.includes(query)) {
+      card.style.display = "block";
+      highlightSearchTerm(card, query);
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+function searchTasksTable(query) {
+  const rows = document.querySelectorAll("#tasksTableBody tr");
+
+  rows.forEach((row) => {
+    if (row.querySelector("td[colspan]")) return; // Skip "no tasks" row
+
+    const title = row.cells[1]?.textContent.toLowerCase() || "";
+    const description = row.cells[2]?.textContent.toLowerCase() || "";
+
+    if (query === "" || title.includes(query) || description.includes(query)) {
+      row.style.display = "";
+      highlightSearchTerm(row, query);
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
+
+function searchNotes(query) {
+  const noteCards = document.querySelectorAll(".note-card");
+
+  noteCards.forEach((card) => {
+    const title =
+      card.querySelector(".note-title")?.textContent.toLowerCase() || "";
+    const content =
+      card.querySelector(".note-content")?.textContent.toLowerCase() || "";
+
+    if (query === "" || title.includes(query) || content.includes(query)) {
+      card.style.display = "block";
+      highlightSearchTerm(card, query);
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+function highlightSearchTerm(element, query) {
+  if (!query) {
+    // Remove existing highlights
+    element.querySelectorAll("mark").forEach((mark) => {
+      mark.outerHTML = mark.innerHTML;
+    });
+    return;
+  }
+
+  const textNodes = getTextNodes(element);
+  textNodes.forEach((node) => {
+    const text = node.textContent;
+    const regex = new RegExp(`(${query})`, "gi");
+    if (regex.test(text)) {
+      const highlightedHTML = text.replace(regex, "<mark>$1</mark>");
+      const wrapper = document.createElement("span");
+      wrapper.innerHTML = highlightedHTML;
+      node.parentNode.replaceChild(wrapper, node);
+    }
+  });
+}
+
+function getTextNodes(element) {
+  const textNodes = [];
+  const walker = document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false
+  );
+
+  let node;
+  while ((node = walker.nextNode())) {
+    if (node.parentNode.tagName !== "MARK") {
+      textNodes.push(node);
+    }
+  }
+
+  return textNodes;
 }
 
 function initModals() {
@@ -473,6 +715,12 @@ function updateHeader(sectionId) {
   const filterButtons = document.querySelectorAll(".filter-btn");
   const header = document.querySelector(".header");
 
+  // Limpiar búsqueda anterior
+  if (searchInput) {
+    searchInput.value = "";
+  }
+  clearSearchHighlights();
+
   // Resetear filtros
   filterButtons.forEach((btn) => {
     btn.style.display = "inline-flex";
@@ -519,6 +767,19 @@ function updateHeader(sectionId) {
       }
       filterButtons.forEach((btn) => (btn.style.display = "none"));
   }
+}
+
+function clearSearchHighlights() {
+  document.querySelectorAll("mark").forEach((mark) => {
+    mark.outerHTML = mark.innerHTML;
+  });
+
+  // Mostrar todos los elementos ocultos por búsqueda
+  document
+    .querySelectorAll(".task-card, #tasksTableBody tr, .note-card")
+    .forEach((element) => {
+      element.style.display = "";
+    });
 }
 
 // ============================================
@@ -849,6 +1110,15 @@ function initNoteModals() {
     meetingForm.addEventListener("submit", (e) => {
       e.preventDefault();
 
+      const actionItemsText = document.getElementById("meetingActions").value;
+      // Procesar action items - separar por líneas y limpiar bullets
+      const actionItems = actionItemsText
+        .split("\n")
+        .map((item) => item.trim())
+        .filter((item) => item.length > 0)
+        .map((item) => item.replace(/^[•\-\*]\s*/, "")) // Remover bullets
+        .map((item) => item.replace(/^@[\w\s]+:\s*/, "")); // Remover menciones con espacios
+
       const noteData = {
         type: "meeting",
         title: document.getElementById("meetingTitle").value,
@@ -857,6 +1127,7 @@ function initNoteModals() {
           date: document.getElementById("meetingDate").value,
           attendees: document.getElementById("meetingAttendees").value,
           agenda: document.getElementById("meetingAgenda").value,
+          actionItems: actionItems,
         },
       };
 
@@ -1028,6 +1299,10 @@ function populateNoteModal(note) {
           note.specificData.agenda;
       }
       document.getElementById("meetingNotes").value = note.content || "";
+      if (note.specificData?.actionItems) {
+        document.getElementById("meetingActions").value =
+          note.specificData.actionItems.join("\n");
+      }
       break;
   }
 }
@@ -1045,7 +1320,7 @@ function initApp() {
   initModals();
   initDrawer();
   initNoteModals();
-  
+
   // Inicializar charts
   initCharts();
 

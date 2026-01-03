@@ -40,7 +40,8 @@ export function renderTasks() {
   } else if (filter === "completed") {
     filteredTasks = tasks.filter((t) => t.completed);
   }
-
+   // Ordenar tareas: activas primero, luego completadas
+  filteredTasks.sort((a, b) => a.completed - b.completed);
   list.innerHTML = "";
 
   filteredTasks.forEach((task) => {
@@ -167,6 +168,9 @@ export function renderTasksTable() {
     filteredTasks = tasks.filter((t) => t.completed);
   }
 
+  // Ordenar tareas: activas primero, luego completadas
+  filteredTasks.sort((a, b) => a.completed - b.completed);
+
   tableBody.innerHTML = "";
 
   if (filteredTasks.length === 0) {
@@ -192,16 +196,16 @@ export function renderTasksTable() {
     if (task.date) {
       const date = new Date(task.date);
       const options = { month: "short", day: "numeric" };
-      dateDisplay = date.toLocaleDateString("en-US", options) + ",";
+      dateDisplay = date.toLocaleDateString("es-ES", options) + ",";
     }
 
     // Mapear prioridad a clases CSS y etiquetas
     const priorityClass = task.completed ? "done" : task.priority || "medium";
     const priorityLabels = {
-      high: "High",
-      medium: "Medium",
-      low: "Low",
-      done: "Done",
+      high: "Alta",
+      medium: "Media",
+      low: "Baja",
+      done: "Completada",
     };
 
     // Determinar el indicador de título
@@ -231,7 +235,7 @@ export function renderTasksTable() {
       </td>
       <td>
         <span class="table-status">${
-          task.completed ? "Completed" : "Active"
+          task.completed ? "Completada" : "Activa"
         }</span>
       </td>
       <td>
