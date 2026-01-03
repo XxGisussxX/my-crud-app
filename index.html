@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TaskMaster - Workspace</title>
+    <meta name="description" content="TaskMaster es una herramienta de productividad integral que combina gestión de tareas, programación de calendario, toma de notas y análisis de dashboard para ayudarte a mantenerte organizado y eficiente." />
+    <meta name="keywords" content="gestor de tareas, productividad, lista de tareas, calendario, notas, dashboard" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="./public/favi.ico" />
     <link rel="stylesheet" href="./src/styles/style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -134,9 +137,9 @@
         </div>
 
         <div class="header-actions">
-          <button class="filter-btn active">All</button>
-          <button class="filter-btn">Active</button>
-          <button class="filter-btn">Completed</button>
+          <button class="filter-btn active">Todo</button>
+          <button class="filter-btn">Activas</button>
+          <button class="filter-btn">Completadas</button>
           <button
             class="filter-icon-btn"
             id="filterIconBtn"
@@ -265,41 +268,41 @@
               <div class="note-type-option" data-type="standard">
                 <div class="note-type-icon">📝</div>
                 <div class="note-type-content">
-                  <h3>Standard Note</h3>
-                  <p>Basic note for general ideas</p>
+                  <h3>Nota Estándar</h3>
+                  <p>Nota básica para ideas generales</p>
                 </div>
               </div>
               <div class="note-type-option" data-type="checklist">
                 <div class="note-type-icon">✅</div>
                 <div class="note-type-content">
-                  <h3>Checklist</h3>
-                  <p>Track tasks with checkboxes</p>
+                  <h3>Listas</h3>
+                  <p>Seguimiento de tareas con casillas</p>
                 </div>
               </div>
               <div class="note-type-option" data-type="idea">
                 <div class="note-type-icon">💡</div>
                 <div class="note-type-content">
-                  <h3>Idea / Brainstorm</h3>
-                  <p>Capture creative thinking</p>
+                  <h3>Idea / Lluvia de Ideas</h3>
+                  <p>Captura tu pensamiento creativo</p>
                 </div>
               </div>
               <div class="note-type-option" data-type="meeting">
                 <div class="note-type-icon">🗓️</div>
                 <div class="note-type-content">
-                  <h3>Meeting Note</h3>
-                  <p>Document meeting discussions</p>
+                  <h3>Reunión</h3>
+                  <p>Documentar discusiones de reuniones</p>
                 </div>
               </div>
               <div class="note-type-option" data-type="sticky">
                 <div class="note-type-icon">📌</div>
                 <div class="note-type-content">
-                  <h3>Sticky Note</h3>
-                  <p>Quick reminders and notes</p>
+                  <h3>Nota Adhesiva</h3>
+                  <p>Recordatorios rápidos</p>
                 </div>
               </div>
             </div>
             <div class="modal-footer">
-              <button class="cancel-btn" id="cancelNoteType">Cancel</button>
+              <button class="cancel-btn" id="cancelNoteType">Cancelar</button>
             </div>
           </div>
         </div>
@@ -311,40 +314,40 @@
       <div id="standardNoteModal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
-            <h2>📝 Standard Note</h2>
+            <h2>📝 Nota Estándar</h2>
             <button class="close-modal" id="closeStandardNote">&times;</button>
           </div>
           <form id="standardNoteForm">
             <div class="form-group">
-              <label for="standardTitle">Title *</label>
+              <label for="standardTitle">Título *</label>
               <input
                 type="text"
                 id="standardTitle"
                 required
-                placeholder="Note title..."
+                placeholder="Título de la nota..."
               />
             </div>
             <div class="form-group">
-              <label for="standardContent">Content</label>
+              <label for="standardContent">Contenido</label>
               <textarea
                 id="standardContent"
                 rows="4"
-                placeholder="Write your note here..."
+                placeholder="Escribe tu nota aquí..."
               ></textarea>
             </div>
             <div class="form-group">
-              <label for="standardTags">Tags</label>
+              <label for="standardTags">Etiquetas</label>
               <input
                 type="text"
                 id="standardTags"
-                placeholder="personal, work, ideas..."
+                placeholder="personal, trabajo, ideas..."
               />
             </div>
             <div class="modal-actions">
               <button type="button" class="btn-cancel" id="cancelStandardNote">
-                Cancel
+                Cancelar
               </button>
-              <button type="submit" class="btn-submit">Save Note</button>
+              <button type="submit" class="btn-submit">Guardar Nota</button>
             </div>
           </form>
         </div>
@@ -354,36 +357,36 @@
       <div id="checklistModal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
-            <h2>✅ Checklist</h2>
+            <h2>✅ Lista</h2>
             <button class="close-modal" id="closeChecklist">&times;</button>
           </div>
           <form id="checklistForm">
             <div class="form-group">
-              <label for="checklistTitle">Title *</label>
+              <label for="checklistTitle">Título *</label>
               <input
                 type="text"
                 id="checklistTitle"
                 required
-                placeholder="Checklist title..."
+                placeholder="Título de la lista..."
               />
             </div>
             <div class="form-group">
-              <label>Items</label>
+              <label>Elementos</label>
               <div id="checklistItems">
                 <div class="checklist-item">
-                  <input type="text" placeholder="First item..." required />
+                  <input type="text" placeholder="Primer elemento..." required />
                   <button type="button" class="remove-item">&times;</button>
                 </div>
               </div>
               <button type="button" id="addChecklistItem" class="add-item-btn">
-                + Add Item
+                + Agregar Elemento
               </button>
             </div>
             <div class="modal-actions">
               <button type="button" class="btn-cancel" id="cancelChecklist">
-                Cancel
+                Cancelar
               </button>
-              <button type="submit" class="btn-submit">Save Checklist</button>
+              <button type="submit" class="btn-submit">Guardar Lista</button>
             </div>
           </form>
         </div>
@@ -393,51 +396,51 @@
       <div id="ideaModal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
-            <h2>💡 Idea / Brainstorm</h2>
+            <h2>💡 Idea / Lluvia de Ideas</h2>
             <button class="close-modal" id="closeIdea">&times;</button>
           </div>
           <form id="ideaForm">
             <div class="form-group">
-              <label for="ideaTitle">Idea Title *</label>
+              <label for="ideaTitle">Título de la Idea *</label>
               <input
                 type="text"
                 id="ideaTitle"
                 required
-                placeholder="Your big idea..."
+                placeholder="Tu gran idea..."
               />
             </div>
             <div class="form-group">
-              <label for="ideaDescription">Description</label>
+              <label for="ideaDescription">Descripción</label>
               <textarea
                 id="ideaDescription"
                 rows="4"
-                placeholder="Describe your idea..."
+                placeholder="Describe tu idea..."
               ></textarea>
             </div>
             <div class="form-group">
-              <label for="ideaKeyPoints">Key Points</label>
+              <label for="ideaKeyPoints">Puntos Clave</label>
               <textarea
                 id="ideaKeyPoints"
                 rows="4"
-                placeholder="• Point 1
-• Point 2
-• Point 3"
+                placeholder="• Punto 1
+• Punto 2
+• Punto 3"
               ></textarea>
             </div>
             <div class="form-group">
-              <label for="ideaPotential">Potential/Impact</label>
+              <label for="ideaPotential">Potencial/Impacto</label>
               <select id="ideaPotential">
-                <option value="low">Low</option>
-                <option value="medium" selected>Medium</option>
-                <option value="high">High</option>
-                <option value="breakthrough">Breakthrough</option>
+                <option value="low">Bajo</option>
+                <option value="medium" selected>Medio</option>
+                <option value="high">Alto</option>
+                <option value="breakthrough">Revolucionario</option>
               </select>
             </div>
             <div class="modal-actions">
               <button type="button" class="btn-cancel" id="cancelIdea">
-                Cancel
+                Cancelar
               </button>
-              <button type="submit" class="btn-submit">Save Idea</button>
+              <button type="submit" class="btn-submit">Guardar Idea</button>
             </div>
           </form>
         </div>
@@ -447,64 +450,64 @@
       <div id="meetingModal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
-            <h2>🗓️ Meeting Note</h2>
+            <h2>🗓️ Reunión</h2>
             <button class="close-modal" id="closeMeeting">&times;</button>
           </div>
           <form id="meetingForm">
             <div class="form-group">
-              <label for="meetingTitle">Meeting Title *</label>
+              <label for="meetingTitle">Título de la Reunión *</label>
               <input
                 type="text"
                 id="meetingTitle"
                 required
-                placeholder="Weekly standup, Project review..."
+                placeholder="Stand up semanal, Revisión de proyecto..."
               />
             </div>
             <div class="form-group">
-              <label for="meetingDate">Date & Time</label>
+              <label for="meetingDate">Fecha y Hora</label>
               <input type="datetime-local" id="meetingDate" />
             </div>
             <div class="form-group">
-              <label for="meetingAttendees">Attendees</label>
+              <label for="meetingAttendees">Asistentes</label>
               <input
                 type="text"
                 id="meetingAttendees"
-                placeholder="John, Sarah, Mike..."
+                placeholder="Juan, María, Carlos..."
               />
             </div>
             <div class="form-group">
-              <label for="meetingAgenda">Agenda/Topics</label>
+              <label for="meetingAgenda">Agenda/Temas</label>
               <textarea
                 id="meetingAgenda"
                 rows="3"
-                placeholder="1. Topic 1
-2. Topic 2
-3. Topic 3"
+                placeholder="1. Tema 1
+2. Tema 2
+3. Tema 3"
               ></textarea>
             </div>
             <div class="form-group">
-              <label for="meetingNotes">Notes & Decisions</label>
+              <label for="meetingNotes">Notas y Decisiones</label>
               <textarea
                 id="meetingNotes"
                 rows="4"
-                placeholder="Key discussion points, decisions made, action items..."
+                placeholder="Puntos de discusión clave, decisiones tomadas, tareas..."
               ></textarea>
             </div>
             <div class="form-group">
-              <label for="meetingActions">Action Items</label>
+              <label for="meetingActions">Elementos de Acción</label>
               <textarea
                 id="meetingActions"
                 rows="3"
-                placeholder="• @John: Task 1 (Due: Date)
-• @Sarah: Task 2 (Due: Date)"
+                placeholder="• @Juan: Tarea 1 (Vence: Fecha)
+• @María: Tarea 2 (Vence: Fecha)"
               ></textarea>
             </div>
             <div class="modal-actions">
               <button type="button" class="btn-cancel" id="cancelMeeting">
-                Cancel
+                Cancelar
               </button>
               <button type="submit" class="btn-submit">
-                Save Meeting Note
+                Guardar Nota de Reunión
               </button>
             </div>
           </form>
@@ -515,20 +518,20 @@
       <div id="stickyModal" class="modal">
         <div class="modal-content sticky-modal">
           <div class="modal-header">
-            <h2>📌 Sticky Note</h2>
+            <h2>📌 Nota Adhesiva</h2>
             <button class="close-modal" id="closeSticky">&times;</button>
           </div>
           <form id="stickyForm">
             <div class="form-group">
-              <label for="stickyContent">Quick Note *</label>
+              <label for="stickyContent">Nota Rápida *</label>
               <textarea
                 id="stickyContent"
                 rows="4"
                 required
-                placeholder="Write a quick reminder or note..."
+                placeholder="Escribe un recordatorio o nota rápida..."
                 maxlength="200"
               ></textarea>
-              <small class="char-counter">0 / 200 characters</small>
+              <small class="char-counter">0 / 200 caracteres</small>
             </div>
             <div class="form-group">
               <label for="stickyColor">Color</label>
@@ -556,9 +559,9 @@
             </div>
             <div class="modal-actions">
               <button type="button" class="btn-cancel" id="cancelSticky">
-                Cancel
+                Cancelar
               </button>
-              <button type="submit" class="btn-submit">Save Sticky</button>
+              <button type="submit" class="btn-submit">Guardar Nota</button>
             </div>
           </form>
         </div>
@@ -570,11 +573,11 @@
           <table class="tasks-table">
             <thead>
               <tr>
-                <th>TITLE</th>
-                <th>DESCRIPTION</th>
-                <th>STATUS</th>
-                <th>PRIORITY</th>
-                <th>DATE</th>
+                <th>TÍTULO</th>
+                <th>DESCRIPCIÓN</th>
+                <th>ESTADO</th>
+                <th>PRIORIDAD</th>
+                <th>FECHA</th>
               </tr>
             </thead>
             <tbody id="tasksTableBody">
@@ -616,7 +619,7 @@
               </svg>
             </div>
             <div class="stat-content">
-              <p class="stat-label">Total Tasks Completed</p>
+              <p class="stat-label">Total de Tareas Completadas</p>
               <div class="stat-value" id="totalCompleted">142</div>
               <div class="stat-change positive">
                 <span class="arrow">↗</span>
@@ -633,9 +636,9 @@
               </svg>
             </div>
             <div class="stat-content">
-              <p class="stat-label">Avg. Completion Time</p>
+              <p class="stat-label">Tiempo Promedio de Desarrollo</p>
               <div class="stat-value" id="avgTime">
-                2.4 <span class="unit">days</span>
+                2.4 <span class="unit">días</span>
               </div>
               <div class="stat-change negative">
                 <span class="arrow">↘</span>
@@ -656,7 +659,7 @@
               </svg>
             </div>
             <div class="stat-content">
-              <p class="stat-label">Overdue Tasks</p>
+              <p class="stat-label">Tareas Vencidas</p>
               <div class="stat-value" id="overdueTasks">3</div>
               <div class="stat-change negative">
                 <span class="arrow">↗</span>

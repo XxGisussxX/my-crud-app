@@ -332,12 +332,6 @@ function renderNoteCard(note) {
           </div>
         </div>
         
-        ${
-          meetingDate
-            ? `<div class="meeting-date-time">${meetingDate}</div>`
-            : ""
-        }
-        
         <div class="attendees-section">
           <div class="avatars-group">
             ${avatarsHTML}
@@ -379,6 +373,10 @@ function renderNoteCard(note) {
               ? `<div class="meeting-notes"><p>${note.content}</p></div>`
               : ""
           }
+        </div>
+        
+        <div class="note-footer">
+          ${meetingDate ? `<div class="note-date">${meetingDate}</div>` : ""}
         </div>
       </div>`;
 
