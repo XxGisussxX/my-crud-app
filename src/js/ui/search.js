@@ -131,25 +131,21 @@ export function clearSearchHighlights() {
  */
 function getTextNodes(element) {
   const textNodes = [];
-  const walker = document.createTreeWalker(
-    element,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: (node) => {
-        // Skip script, style, and already highlighted nodes
-        if (
-          node.parentNode.tagName === "SCRIPT" ||
-          node.parentNode.tagName === "STYLE" ||
-          node.parentNode.tagName === "MARK"
-        ) {
-          return NodeFilter.FILTER_REJECT;
-        }
-        return node.textContent.trim()
-          ? NodeFilter.FILTER_ACCEPT
-          : NodeFilter.FILTER_REJECT;
-      },
-    }
-  );
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+    acceptNode: (node) => {
+      // Skip script, style, and already highlighted nodes
+      if (
+        node.parentNode.tagName === "SCRIPT" ||
+        node.parentNode.tagName === "STYLE" ||
+        node.parentNode.tagName === "MARK"
+      ) {
+        return NodeFilter.FILTER_REJECT;
+      }
+      return node.textContent.trim()
+        ? NodeFilter.FILTER_ACCEPT
+        : NodeFilter.FILTER_REJECT;
+    },
+  });
 
   let node;
   while ((node = walker.nextNode())) {

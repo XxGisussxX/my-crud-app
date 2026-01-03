@@ -219,7 +219,8 @@ export function getChecklistProgress(noteId) {
   return {
     completed,
     total: items.length,
-    percentage: items.length > 0 ? Math.round((completed / items.length) * 100) : 0,
+    percentage:
+      items.length > 0 ? Math.round((completed / items.length) * 100) : 0,
   };
 }
 

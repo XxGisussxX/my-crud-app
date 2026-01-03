@@ -68,7 +68,9 @@ function renderStandardNote(note, formattedDate, size) {
   const tags = note.specificData?.tags || [];
 
   return `
-    <div class="note-card" style="background-color: ${note.color}" data-note-id="${note.id}" data-size="${size}">
+    <div class="note-card" style="background-color: ${
+      note.color
+    }" data-note-id="${note.id}" data-size="${size}">
       <div class="note-header">
         <h3 class="note-title">${escapeHtml(note.title)}</h3>
         <div class="note-actions">
@@ -79,7 +81,9 @@ function renderStandardNote(note, formattedDate, size) {
       <div class="note-content"><p>${escapeHtml(note.content || "")}</p></div>
       <div class="note-footer">
         <div class="note-tags">
-          ${tags.map((tag) => `<span class="note-tag">${escapeHtml(tag)}</span>`).join("")}
+          ${tags
+            .map((tag) => `<span class="note-tag">${escapeHtml(tag)}</span>`)
+            .join("")}
         </div>
         <div class="note-date">${formattedDate}</div>
       </div>
@@ -92,7 +96,9 @@ function renderStandardNote(note, formattedDate, size) {
  */
 function renderStickyNote(note, formattedDate, size) {
   return `
-    <div class="note-card sticky-card" style="background-color: ${note.color}" data-note-id="${note.id}" data-size="${size}">
+    <div class="note-card sticky-card" style="background-color: ${
+      note.color
+    }" data-note-id="${note.id}" data-size="${size}">
       <div class="note-actions">
         <button class="note-action-btn edit-note" title="Editar">✏️</button>
         <button class="note-action-btn delete-note" title="Eliminar">🗑️</button>
@@ -115,7 +121,9 @@ function renderChecklistNote(note, formattedDate, size) {
   const itemsHtml = items
     .map(
       (item, index) => `
-    <div class="checklist-item-preview ${item.checked ? "checked" : ""}" data-item-index="${index}">
+    <div class="checklist-item-preview ${
+      item.checked ? "checked" : ""
+    }" data-item-index="${index}">
       <span class="checkmark">${item.checked ? "✓" : "○"}</span>
       <span class="item-text">${escapeHtml(item.text)}</span>
     </div>
@@ -130,7 +138,9 @@ function renderChecklistNote(note, formattedDate, size) {
       : "";
 
   return `
-    <div class="note-card checklist-card" data-note-id="${note.id}" data-size="${size}">
+    <div class="note-card checklist-card" data-note-id="${
+      note.id
+    }" data-size="${size}">
       <div class="note-header">
         <h3 class="note-title">${escapeHtml(note.title)}</h3>
         <div class="note-actions">
@@ -145,7 +155,9 @@ function renderChecklistNote(note, formattedDate, size) {
         </div>
       </div>
       <div class="checklist-progress" style="background: rgba(0,0,0,0.05); padding: 8px; border-radius: 8px; font-size: 12px; text-align: center; color: #6b7280;">
-        ${progress?.completed}/${progress?.total} completados (${progressPercentage}%)
+        ${progress?.completed}/${
+    progress?.total
+  } completados (${progressPercentage}%)
       </div>
       <div class="note-date">${formattedDate}</div>
     </div>
@@ -168,11 +180,15 @@ function renderIdeaNote(note, formattedDate, size) {
 
   const morePoints =
     keyPoints.length > 2
-      ? `<div class="key-point" style="color: #9ca3af;">+${keyPoints.length - 2} más puntos...</div>`
+      ? `<div class="key-point" style="color: #9ca3af;">+${
+          keyPoints.length - 2
+        } más puntos...</div>`
       : "";
 
   return `
-    <div class="note-card idea-card" data-note-id="${note.id}" data-size="${size}">
+    <div class="note-card idea-card" data-note-id="${
+      note.id
+    }" data-size="${size}">
       <div class="note-header">
         <h3 class="note-title">${escapeHtml(note.title)}</h3>
         <div class="note-actions">
@@ -205,7 +221,9 @@ function renderMeetingNote(note, formattedDate, size) {
     .slice(0, 3)
     .map(
       (attendee) =>
-        `<div class="avatar" style="background: #667eea;">${attendee.charAt(0).toUpperCase()}</div>`
+        `<div class="avatar" style="background: #667eea;">${attendee
+          .charAt(0)
+          .toUpperCase()}</div>`
     )
     .join("");
 
@@ -220,7 +238,9 @@ function renderMeetingNote(note, formattedDate, size) {
     .join("");
 
   return `
-    <div class="note-card meeting-card" data-note-id="${note.id}" data-size="${size}">
+    <div class="note-card meeting-card" data-note-id="${
+      note.id
+    }" data-size="${size}">
       <div class="meeting-header">
         <div class="meeting-title-section">
           <h3 class="meeting-title">${escapeHtml(note.title)}</h3>
@@ -252,7 +272,11 @@ function renderMeetingNote(note, formattedDate, size) {
               <div class="section-label">Acción</div>
               <ul class="action-items-list">
                 ${actionItemsHtml}
-                ${actionItems.length > 2 ? `<li>+${actionItems.length - 2} más...</li>` : ""}
+                ${
+                  actionItems.length > 2
+                    ? `<li>+${actionItems.length - 2} más...</li>`
+                    : ""
+                }
               </ul>
             </div>`
             : ""

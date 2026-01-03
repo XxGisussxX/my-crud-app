@@ -5,7 +5,11 @@
 
 import { renderTasks, updateStats, renderTasksTable } from "../tasks/index.js";
 import { renderNotes } from "../notes/ui.js";
-import { initCalendar, updateCalendarEvents, updateCharts } from "../dashboard/index.js";
+import {
+  initCalendar,
+  updateCalendarEvents,
+  updateCharts,
+} from "../dashboard/index.js";
 import { clearSearchHighlights } from "./search.js";
 
 /**

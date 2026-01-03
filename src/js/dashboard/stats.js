@@ -225,8 +225,7 @@ export function getDashboardStats() {
     total,
     completed,
     pending,
-    completionRate:
-      total > 0 ? Math.round((completed / total) * 100) : 0,
+    completionRate: total > 0 ? Math.round((completed / total) * 100) : 0,
   };
 }
 

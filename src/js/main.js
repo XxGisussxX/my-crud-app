@@ -31,7 +31,7 @@ import {
   initNoteModals,
   initModals,
   openSpecificNoteModal,
-  editNote as editNoteUI
+  editNote as editNoteUI,
 } from "./ui/index.js";
 import { initNavigation, initDrawer, updateHeader } from "./ui/index.js";
 import { initSearch, clearSearchHighlights } from "./ui/index.js";
@@ -39,7 +39,7 @@ import { initFilters } from "./ui/index.js";
 
 // Shared Module
 import { getTasks, saveTasks } from "./shared/storage.js";
-import { showConfirmation } from "./confirmation.js";
+import { showConfirmation } from "./shared/confirmation.js";
 
 // Make functions globally available for compatibility
 window.getTasks = getTasks;
@@ -100,4 +100,3 @@ function initApp() {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener("DOMContentLoaded", initApp);
-
