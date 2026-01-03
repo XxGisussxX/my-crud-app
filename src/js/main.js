@@ -90,6 +90,7 @@ function initApp() {
 
   // Inicializar charts
   initCharts();
+  initHeatmap();
 
   // Renderizar contenido inicial
   renderTasks();

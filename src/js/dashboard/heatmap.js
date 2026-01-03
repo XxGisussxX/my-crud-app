@@ -9,7 +9,7 @@ import { getTasks } from "../shared/storage.js";
  * Initialize activity heatmap
  */
 export function initHeatmap() {
-  const heatmapContainer = document.getElementById("activityHeatmap");
+  const heatmapContainer = document.getElementById("heatmap-container");
   if (!heatmapContainer) return;
 
   const heatmapData = generateHeatmapData();
@@ -49,51 +49,123 @@ function generateHeatmapData() {
  * Render heatmap visualization
  */
 function renderHeatmap(container, heatmapData) {
-  const weeks = [];
   const dates = Object.keys(heatmapData).sort();
+  const dayNames = ["D", "L", "M", "M", "J", "V", "S"];
+  const monthNames = {
+    "01": "Enero",
+    "02": "Febrero",
+    "03": "Marzo",
+    "04": "Abril",
+    "05": "Mayo",
+    "06": "Junio",
+    "07": "Julio",
+    "08": "Agosto",
+    "09": "Septiembre",
+    10: "Octubre",
+    11: "Noviembre",
+    12: "Diciembre",
+  };
 
-  // Group dates into weeks
-  let currentWeek = [];
+  // Obtener meses y semanas
+  const months = {};
+  const cells = [];
+
   dates.forEach((date) => {
-    currentWeek.push({ date, count: heatmapData[date] });
-    if (currentWeek.length === 7) {
-      weeks.push(currentWeek);
-      currentWeek = [];
+    const dateObj = new Date(date + "T00:00:00");
+    const month = dateObj.getMonth() + 1;
+    const year = dateObj.getFullYear();
+    const monthKey = `${year}-${String(month).padStart(2, "0")}`;
+
+    if (!months[monthKey]) {
+      months[monthKey] = {
+        name: monthNames[String(month).padStart(2, "0")],
+        weeks: 0,
+      };
+    }
+
+    cells.push({
+      date,
+      count: heatmapData[date],
+      dayOfWeek: dateObj.getDay(),
+      month: monthKey,
+    });
+  });
+
+  // Build HTML structure
+  let html = `
+    <div class="heatmap-wrapper">
+      <h3 class="heatmap-title">Actividad de Tareas</h3>
+      <div class="heatmap-container">
+        <div class="heatmap-months-row">
+          <div class="heatmap-days-column"></div>
+  `;
+
+  // Agregar nombres de meses
+  let lastMonth = null;
+  let monthWeeks = 0;
+
+  cells.forEach((cell) => {
+    if (cell.month !== lastMonth) {
+      if (lastMonth !== null) {
+        html += `<div class="heatmap-month-label" style="grid-column: span ${monthWeeks};">${months[lastMonth].name}</div>`;
+      }
+      lastMonth = cell.month;
+      monthWeeks = 0;
+    }
+    if (cell.dayOfWeek === 0) {
+      monthWeeks++;
     }
   });
 
-  if (currentWeek.length > 0) {
-    weeks.push(currentWeek);
+  if (lastMonth !== null) {
+    html += `<div class="heatmap-month-label" style="grid-column: span ${monthWeeks};">${months[lastMonth].name}</div>`;
   }
 
-  // Build HTML
-  let html = '<div class="heatmap-grid">';
-
-  weeks.forEach((week, weekIndex) => {
-    html += `<div class="heatmap-week" data-week="${weekIndex}">`;
-
-    week.forEach((day) => {
-      const intensity = getHeatmapIntensity(day.count);
-      const dateObj = new Date(day.date);
-      const dayName = dateObj.toLocaleDateString("es-ES", { weekday: "short" });
-
-      html += `
-        <div class="heatmap-cell ${intensity}" 
-             title="${day.date}: ${day.count} completadas"
-             data-date="${day.date}"
-             data-count="${day.count}">
-          <span class="heatmap-day-name">${dayName[0]}</span>
+  html += `
         </div>
-      `;
-    });
+        <div class="heatmap-body">
+          <div class="heatmap-days-column">
+  `;
 
-    html += "</div>";
+  // Agregar nombres de días de la semana
+  dayNames.forEach((day) => {
+    html += `<div class="heatmap-day-label">${day}</div>`;
   });
 
-  html += "</div>";
+  html += `
+          </div>
+          <div class="heatmap-grid">
+  `;
+
+  // Agregar celdas del heatmap
+  cells.forEach((cell) => {
+    const intensity = getHeatmapIntensity(cell.count);
+    html += `
+      <div class="heatmap-cell ${intensity}" 
+           title="${cell.date}: ${cell.count} completadas"
+           data-date="${cell.date}"
+           data-count="${cell.count}">
+      </div>
+    `;
+  });
+
+  html += `
+          </div>
+        </div>
+      </div>
+      <div class="heatmap-legend">
+        <span>Menos</span>
+        <div class="heatmap-cell intensity-0"></div>
+        <div class="heatmap-cell intensity-1"></div>
+        <div class="heatmap-cell intensity-2"></div>
+        <div class="heatmap-cell intensity-3"></div>
+        <div class="heatmap-cell intensity-4"></div>
+        <span>Más</span>
+      </div>
+    </div>
+  `;
 
   container.innerHTML = html;
-  attachHeatmapListeners(container);
 }
 
 /**
@@ -108,39 +180,10 @@ function getHeatmapIntensity(count) {
 }
 
 /**
- * Attach hover listeners to heatmap cells
- */
-function attachHeatmapListeners(container) {
-  const cells = container.querySelectorAll(".heatmap-cell");
-
-  cells.forEach((cell) => {
-    cell.addEventListener("mouseenter", (e) => {
-      const tooltip = document.createElement("div");
-      tooltip.className = "heatmap-tooltip";
-      tooltip.textContent = cell.title;
-
-      document.body.appendChild(tooltip);
-
-      const rect = cell.getBoundingClientRect();
-      tooltip.style.left = rect.left + "px";
-      tooltip.style.top = rect.top - tooltip.offsetHeight - 5 + "px";
-
-      cell.addEventListener(
-        "mouseleave",
-        () => {
-          tooltip.remove();
-        },
-        { once: true }
-      );
-    });
-  });
-}
-
-/**
  * Update heatmap data
  */
 export function updateHeatmap() {
-  const heatmapContainer = document.getElementById("activityHeatmap");
+  const heatmapContainer = document.getElementById("heatmap-container");
   if (!heatmapContainer) return;
 
   const heatmapData = generateHeatmapData();

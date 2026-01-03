@@ -156,7 +156,7 @@ function updateLineChart() {
         },
         x: {
           grid: {
-            display: "flex"
+            display: "flex",
           },
         },
       },
@@ -173,8 +173,10 @@ function updateDonutChart() {
 
   const tasks = getTasks();
 
-  const completed = tasks.filter((t) => t.completed).length;
-  const pending = tasks.filter((t) => !t.completed).length;
+  // Count tasks by priority
+  const highPriority = tasks.filter((t) => t.priority === "high").length;
+  const mediumPriority = tasks.filter((t) => t.priority === "medium").length;
+  const lowPriority = tasks.filter((t) => t.priority === "low").length;
 
   const ctx = canvas.getContext("2d");
 
@@ -186,12 +188,12 @@ function updateDonutChart() {
   donutChartInstance = new Chart(ctx, {
     type: "doughnut",
     data: {
-      labels: ["Completadas", "Pendientes"],
+      labels: ["Alta", "Media", "Baja"],
       datasets: [
         {
-          data: [completed, pending],
-          backgroundColor: ["#10b981", "#ef4444"],
-          borderColor: ["#059669", "#dc2626"],
+          data: [highPriority, mediumPriority, lowPriority],
+          backgroundColor: ["#ef4444", "#f59e0b", "#3b82f6"],
+          borderColor: ["#dc2626", "#d97706", "#1d4ed8"],
           borderWidth: 2,
         },
       ],

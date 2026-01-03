@@ -76,9 +76,17 @@ export function searchTasks(query) {
  * Search tasks in table view
  */
 export function searchTasksTable(query) {
-  const rows = document.querySelectorAll("#taskTable tbody tr");
+  const tbody = document.getElementById("tasksTableBody");
+  if (!tbody) return;
+
+  const rows = tbody.querySelectorAll("tr");
 
   rows.forEach((row) => {
+    // Skip empty state row
+    if (row.querySelector("td[colspan]")) {
+      return;
+    }
+
     const text = row.textContent.toLowerCase();
 
     if (query === "" || text.includes(query)) {

@@ -14,6 +14,7 @@ import {
 } from "./logic.js";
 import { NOTE_TYPES } from "../shared/constants.js";
 import { formatDate, escapeHtml } from "../shared/utils.js";
+import { showConfirmation } from "../shared/confirmation.js";
 
 /**
  * Render all notes
@@ -114,7 +115,9 @@ function renderStickyNote(note, formattedDate, size) {
  * Render checklist note card
  */
 function renderChecklistNote(note, formattedDate, size) {
-  const items = note.specificData?.items || [];
+  const items = Array.isArray(note.specificData?.items)
+    ? note.specificData.items
+    : [];
   const progress = getChecklistProgress(note.id);
   const progressPercentage = progress?.percentage || 0;
 
@@ -169,7 +172,9 @@ function renderChecklistNote(note, formattedDate, size) {
  */
 function renderIdeaNote(note, formattedDate, size) {
   const potential = note.specificData?.potential || "medium";
-  const keyPoints = note.specificData?.keyPoints || [];
+  const keyPoints = Array.isArray(note.specificData?.keyPoints)
+    ? note.specificData.keyPoints
+    : [];
 
   const potentialBadge = `<div class="idea-potential ${potential}">${potential.toUpperCase()}</div>`;
 
@@ -213,23 +218,43 @@ function renderIdeaNote(note, formattedDate, size) {
  * Render meeting note card
  */
 function renderMeetingNote(note, formattedDate, size) {
-  const attendees = note.specificData?.attendees || [];
+  const attendees = Array.isArray(note.specificData?.attendees)
+    ? note.specificData.attendees
+    : [];
   const agenda = note.specificData?.agenda || "";
-  const actionItems = note.specificData?.actionItems || [];
+  const actionItems = Array.isArray(note.specificData?.actionItems)
+    ? note.specificData.actionItems
+    : [];
+
+  // Generate avatar colors based on name
+  const getAvatarColor = (name) => {
+    const colors = [
+      "3b82f6",
+      "8b5cf6",
+      "ec4899",
+      "f59e0b",
+      "10b981",
+      "ef4444",
+      "06b6d4",
+    ];
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+  };
 
   const avatarHtml = attendees
-    .slice(0, 3)
-    .map(
-      (attendee) =>
-        `<div class="avatar" style="background: #667eea;">${attendee
-          .charAt(0)
-          .toUpperCase()}</div>`
-    )
+    .slice(0, 5)
+    .map((attendee) => {
+      const name = encodeURIComponent(attendee);
+      const color = getAvatarColor(attendee);
+      return `<img class="avatar" src="https://ui-avatars.com/api/?name=${name}&background=${color}&color=fff&size=128&bold=true" alt="${attendee}" title="${attendee}" />`;
+    })
     .join("");
 
   const moreAttendees =
-    attendees.length > 3
-      ? `<div class="avatar-more">+${attendees.length - 3}</div>`
+    attendees.length > 5
+      ? `<div class="avatar-more" title="${attendees.slice(5).join(", ")}">+${
+          attendees.length - 5
+        }</div>`
       : "";
 
   const actionItemsHtml = actionItems
@@ -320,10 +345,22 @@ function attachNoteEventListeners(container) {
  * Delete note with confirmation
  */
 export function deleteNoteWithConfirmation(noteId) {
-  if (confirm("¿Está seguro de que desea eliminar esta nota?")) {
-    deleteNote(noteId);
-    renderNotes();
-  }
+  const note = getNoteById(noteId);
+  if (!note) return;
+
+  showConfirmation({
+    title: "Eliminar nota",
+    message: `¿Estás seguro de que deseas eliminar la nota "${
+      note.title || "Sin título"
+    }"?`,
+    type: "delete",
+    confirmText: "Eliminar",
+    cancelText: "Cancelar",
+    onConfirm: () => {
+      deleteNote(noteId);
+      renderNotes();
+    },
+  });
 }
 
 /**
