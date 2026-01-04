@@ -143,9 +143,17 @@
         </div>
 
         <div class="header-actions">
-          <button class="filter-btn active">Todo</button>
-          <button class="filter-btn">Activas</button>
-          <button class="filter-btn">Completadas</button>
+          <select id="statusFilter" class="filter-dropdown">
+            <option value="all">Todo</option>
+            <option value="active">Activas</option>
+            <option value="completed">Completadas</option>
+          </select>
+          <select id="priorityFilter" class="filter-dropdown">
+            <option value="all">Todas las prioridades</option>
+            <option value="high">Prioridad Alta</option>
+            <option value="medium">Prioridad Media</option>
+            <option value="low">Prioridad Baja</option>
+          </select>
           <button
             class="filter-icon-btn"
             id="filterIconBtn"

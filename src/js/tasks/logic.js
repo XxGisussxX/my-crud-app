@@ -103,6 +103,48 @@ export function getFilteredTasks(filter = "all") {
 }
 
 /**
+ * Get tasks with combined filters (status + priority)
+ */
+export function getTasksWithFilters(
+  statusFilter = "all",
+  priorityFilter = null
+) {
+  let tasks = getTasks();
+
+  // Apply status filter
+  switch (statusFilter.toLowerCase()) {
+    case "active":
+      tasks = tasks.filter((t) => !t.completed);
+      break;
+    case "completed":
+      tasks = tasks.filter((t) => t.completed);
+      break;
+    default:
+      break;
+  }
+
+  // Apply priority filter if specified
+  if (priorityFilter && priorityFilter !== "all") {
+    tasks = tasks.filter((t) => t.priority === priorityFilter);
+  }
+
+  // Sort by date (ascending - most recent first)
+  tasks = tasks.sort((a, b) => {
+    // If both have dates, sort by date
+    if (a.date && b.date) {
+      return new Date(a.date) - new Date(b.date);
+    }
+    // Items with dates come before items without dates
+    if (a.date && !b.date) return -1;
+    if (!a.date && b.date) return 1;
+    // If neither have dates, maintain original order
+    return 0;
+  });
+
+  return tasks;
+}
+
+/**
  * Get task statistics
  */
 export function getTaskStats() {
