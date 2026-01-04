@@ -386,13 +386,20 @@ function initMeetingNoteModal() {
         .map((item) => item.replace(/^[•\-\*]\s*/, ""))
         .map((item) => item.replace(/^@[\w\s]+:\s*/, ""));
 
+      // Parse attendees (allow comma or newline separated)
+      const rawAttendees = document.getElementById("meetingAttendees").value;
+      const attendees = rawAttendees
+        .split(/[,\n]/)
+        .map((a) => a.trim())
+        .filter((a) => a.length > 0);
+
       const noteData = {
         type: NOTE_TYPES.MEETING,
         title: document.getElementById("meetingTitle").value,
         content: document.getElementById("meetingNotes").value,
         specificData: {
           date: document.getElementById("meetingDate").value,
-          attendees: document.getElementById("meetingAttendees").value,
+          attendees,
           agenda: document.getElementById("meetingAgenda").value,
           actionItems,
         },
@@ -498,8 +505,10 @@ function populateNoteModal(note) {
         document.getElementById("meetingDate").value = note.specificData.date;
       }
       if (note.specificData?.attendees) {
-        document.getElementById("meetingAttendees").value =
-          note.specificData.attendees;
+        const attendeesValue = Array.isArray(note.specificData.attendees)
+          ? note.specificData.attendees.join(", ")
+          : note.specificData.attendees;
+        document.getElementById("meetingAttendees").value = attendeesValue;
       }
       if (note.specificData?.agenda) {
         document.getElementById("meetingAgenda").value =

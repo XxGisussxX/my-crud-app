@@ -3,7 +3,7 @@
    ============================================== */
 
 .calendario-container {
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
   flex: 1;
   height: calc(100vh - var(--header-height));
   display: flex;

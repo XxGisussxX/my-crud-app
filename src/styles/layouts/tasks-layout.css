@@ -10,6 +10,12 @@
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  scrollbar-width: none; /* Oculta barra en Firefox */
+  -ms-overflow-style: none; /* Oculta barra en IE/Edge heredado */
+}
+
+.tasks-container-wrapper::-webkit-scrollbar {
+  display: none; /* Oculta barra en navegadores WebKit */
 }
 
 .tasks-container {
@@ -17,10 +23,6 @@
   scroll-behavior: smooth;
   overflow-x: hidden;
   overflow-y: hidden;
-}
-
-.tasks-container::-webkit-scrollbar {
-  width: 8px;
 }
 
 .tasks-container::-webkit-scrollbar-track {
@@ -39,10 +41,10 @@
 
 .tasks-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: var(--spacing-2xl);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--spacing-lg);
   width: 100%;
-  padding: 20px 60px;
+  padding: 20px 0;
 }
 
 /* Tasks Table */
@@ -54,6 +56,12 @@
   min-height: calc(100vh - var(--header-height));
   max-height: calc(100vh - var(--header-height));
   width: 100%;
+  scrollbar-width: none; /* Oculta barra en Firefox */
+  -ms-overflow-style: none; /* Oculta barra en IE/Edge heredado */
+}
+
+.tasks-table-container::-webkit-scrollbar {
+  display: none; /* Oculta barra en navegadores WebKit */
 }
 
 .tasks-table {
@@ -117,39 +125,7 @@
 }
 
 .table-title-indicator {
-  width: 12px;
-  height: 12px;
-  border-radius: var(--radius-full);
-  flex-shrink: 0;
-}
-
-.table-title-indicator.high {
-  background: var(--color-priority-high);
-}
-
-.table-title-indicator.medium {
-  background: var(--color-priority-medium);
-}
-
-.table-title-indicator.low {
-  background: var(--color-priority-low);
-}
-
-.table-title-indicator.done,
-.table-title-indicator.completed {
-  background: var(--color-priority-done);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
-
-.table-title-indicator.completed::after {
-  content: "✓";
-  color: white;
-  font-size: 10px;
-  font-weight: bold;
-  line-height: 1;
+  display: none;
 }
 
 .table-title-text {

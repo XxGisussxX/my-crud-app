@@ -10,10 +10,12 @@
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  scrollbar-width: none; /* Oculta barra en Firefox */
+  -ms-overflow-style: none; /* Oculta barra en IE/Edge heredado */
 }
 
 .notas-container::-webkit-scrollbar {
-  width: 8px;
+  display: none; /* Oculta barra en navegadores WebKit */
 }
 
 .notas-container::-webkit-scrollbar-track {
@@ -35,7 +37,7 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--spacing-2xl);
   width: 100%;
-  padding: 20px 60px;
+  padding: 20px 10px 20px 0px;
   grid-auto-flow: dense;
   grid-auto-rows: 150px;
 }

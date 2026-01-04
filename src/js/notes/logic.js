@@ -157,11 +157,11 @@ export function getContentSize(type, content, specificData) {
   if (type === NOTE_TYPES.IDEA) {
     const contentLength = content?.length || 0;
     const keyPointsCount = specificData?.keyPoints?.length || 0;
-    if (keyPointsCount > 7 || contentLength > 300) return "large";
-    if (keyPointsCount > 5 || contentLength > 250) return "md-plus";
-    if (keyPointsCount > 3 || contentLength > 180) return "medium";
-    if (keyPointsCount > 1 || contentLength > 100) return "sm-plus";
-    if (contentLength > 50) return "small";
+    if (keyPointsCount > 7 || contentLength > 300) return "medium";
+    if (keyPointsCount > 5 || contentLength > 250) return "sm-plus";
+    if (keyPointsCount > 3 || contentLength > 180) return "small";
+    if (keyPointsCount > 1 || contentLength > 100) return "xs";
+    if (contentLength > 50) return "xs";
     return "xs";
   }
 
@@ -177,7 +177,17 @@ export function getContentSize(type, content, specificData) {
   }
 
   if (type === NOTE_TYPES.MEETING) {
-    const attendeesCount = specificData?.attendees?.length || 0;
+    const rawAttendees = specificData?.attendees;
+    const attendeesArray = Array.isArray(rawAttendees)
+      ? rawAttendees
+      : typeof rawAttendees === "string"
+      ? rawAttendees
+          .split(/[\n,]/)
+          .map((a) => a.trim())
+          .filter((a) => a.length > 0)
+      : [];
+
+    const attendeesCount = attendeesArray.length;
     const actionItemsCount = specificData?.actionItems?.length || 0;
     const totalContent = attendeesCount + actionItemsCount;
     if (totalContent > 12) return "large";
