@@ -9,6 +9,7 @@ import {
   deleteTask,
   getTaskStats,
   getFilteredTasks,
+  getTasksWithFilters,
 } from "./logic.js";
 import { SELECTORS, PRIORITY_LABELS, PRIORITIES } from "../shared/constants.js";
 import { formatDate } from "../shared/utils.js";
@@ -39,21 +40,36 @@ export function renderTasks() {
   const taskList = document.getElementById("taskList");
   if (!taskList) return;
 
-  const activeFilterBtn = document.querySelector(".filter-btn.active");
-  const filterText = activeFilterBtn
-    ? activeFilterBtn.textContent.trim().toLowerCase()
-    : "todo";
+  // Get filter values from dropdowns or buttons
+  let statusFilter = "all";
+  let priorityFilter = "all";
 
-  // Map Spanish text to filter values
-  const filterMap = {
-    todo: "all",
-    activas: "active",
-    completadas: "completed",
-  };
-  const filter = filterMap[filterText] || "all";
+  // Try to get values from dropdowns first
+  const statusSelect = document.getElementById("statusFilter");
+  const prioritySelect = document.getElementById("priorityFilter");
 
-  let tasks = getFilteredTasks(filter);
-  tasks.sort((a, b) => a.completed - b.completed);
+  if (statusSelect) {
+    statusFilter = statusSelect.value || "all";
+  } else {
+    // Fallback to button-based filter
+    const activeFilterBtn = document.querySelector(".filter-btn.active");
+    const filterText = activeFilterBtn
+      ? activeFilterBtn.textContent.trim().toLowerCase()
+      : "todo";
+
+    const filterMap = {
+      todo: "all",
+      activas: "active",
+      completadas: "completed",
+    };
+    statusFilter = filterMap[filterText] || "all";
+  }
+
+  if (prioritySelect) {
+    priorityFilter = prioritySelect.value || "all";
+  }
+
+  let tasks = getTasksWithFilters(statusFilter, priorityFilter);
 
   taskList.innerHTML = "";
 
@@ -140,22 +156,37 @@ export function renderTasksTable() {
   const tbody = document.getElementById("tasksTableBody");
   if (!tbody) return;
 
-  const activeFilterBtn = document.querySelector(".filter-btn.active");
-  const filterText = activeFilterBtn
-    ? activeFilterBtn.textContent.trim().toLowerCase()
-    : "todo";
+  // Get filter values from dropdowns or buttons
+  let statusFilter = "all";
+  let priorityFilter = "all";
 
-  // Map Spanish text to filter values
-  const filterMap = {
-    todo: "all",
-    activas: "active",
-    completadas: "completed",
-  };
-  const filter = filterMap[filterText] || "all";
+  // Try to get values from dropdowns first
+  const statusSelect = document.getElementById("statusFilter");
+  const prioritySelect = document.getElementById("priorityFilter");
 
-  let tasks = getFilteredTasks(filter);
-  // Sort: active tasks first, then completed
-  tasks.sort((a, b) => a.completed - b.completed);
+  if (statusSelect) {
+    statusFilter = statusSelect.value || "all";
+  } else {
+    // Fallback to button-based filter
+    const activeFilterBtn = document.querySelector(".filter-btn.active");
+    const filterText = activeFilterBtn
+      ? activeFilterBtn.textContent.trim().toLowerCase()
+      : "todo";
+
+    const filterMap = {
+      todo: "all",
+      activas: "active",
+      completadas: "completed",
+    };
+    statusFilter = filterMap[filterText] || "all";
+  }
+
+  if (prioritySelect) {
+    priorityFilter = prioritySelect.value || "all";
+  }
+
+  let tasks = getTasksWithFilters(statusFilter, priorityFilter);
+
   tbody.innerHTML = "";
 
   if (tasks.length === 0) {
@@ -321,4 +352,24 @@ function highlightText(element, query) {
   const text = element.textContent;
   const regex = new RegExp(`(${query})`, "gi");
   element.innerHTML = text.replace(regex, "<mark>$1</mark>");
+}
+
+/**
+ * Initialize filter listeners
+ */
+export function initFilterListeners() {
+  const statusFilter = document.getElementById("statusFilter");
+  const priorityFilter = document.getElementById("priorityFilter");
+
+  if (statusFilter) {
+    statusFilter.addEventListener("change", () => {
+      renderTasks();
+    });
+  }
+
+  if (priorityFilter) {
+    priorityFilter.addEventListener("change", () => {
+      renderTasks();
+    });
+  }
 }

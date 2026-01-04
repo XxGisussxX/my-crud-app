@@ -69,7 +69,13 @@ export function getNoteById(noteId) {
  * Get all notes
  */
 export function getAllNotes() {
-  return getNotes();
+  const notes = getNotes();
+  // Sort notes by creation date (most recent first)
+  return notes.sort((a, b) => {
+    const dateA = new Date(a.createdAt || 0);
+    const dateB = new Date(b.createdAt || 0);
+    return dateB - dateA;
+  });
 }
 
 /**
@@ -77,7 +83,13 @@ export function getAllNotes() {
  */
 export function getNotesByType(type) {
   const notes = getNotes();
-  return notes.filter((note) => note.type === type);
+  const filtered = notes.filter((note) => note.type === type);
+  // Sort by creation date (most recent first)
+  return filtered.sort((a, b) => {
+    const dateA = new Date(a.createdAt || 0);
+    const dateB = new Date(b.createdAt || 0);
+    return dateB - dateA;
+  });
 }
 
 /**
@@ -87,7 +99,7 @@ export function searchNotes(query) {
   const notes = getNotes();
   const lowerQuery = query.toLowerCase();
 
-  return notes.filter(
+  const filtered = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(lowerQuery) ||
       note.content.toLowerCase().includes(lowerQuery) ||
@@ -95,6 +107,13 @@ export function searchNotes(query) {
         tag.toLowerCase().includes(lowerQuery)
       )
   );
+
+  // Sort by creation date (most recent first)
+  return filtered.sort((a, b) => {
+    const dateA = new Date(a.createdAt || 0);
+    const dateB = new Date(b.createdAt || 0);
+    return dateB - dateA;
+  });
 }
 
 /**

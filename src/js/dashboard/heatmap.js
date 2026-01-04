@@ -23,11 +23,11 @@ function generateHeatmapData() {
   const tasks = getTasks();
   const heatmapData = {};
 
-  // Initialize with last 12 weeks
+  // Initialize with last 12 weeks (85 days) - from oldest to newest
   const today = new Date();
-  for (let i = 84; i >= 0; i--) {
+  for (let i = 0; i <= 84; i++) {
     const date = new Date(today);
-    date.setDate(date.getDate() - i);
+    date.setDate(date.getDate() - (84 - i));
     const dateStr = date.toISOString().split("T")[0];
     heatmapData[dateStr] = 0;
   }
@@ -61,9 +61,9 @@ function renderHeatmap(container, heatmapData) {
     "07": "Julio",
     "08": "Agosto",
     "09": "Septiembre",
-    10: "Octubre",
-    11: "Noviembre",
-    12: "Diciembre",
+    "10": "Octubre",
+    "11": "Noviembre",
+    "12": "Diciembre",
   };
 
   // Obtener meses y semanas

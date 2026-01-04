@@ -6,9 +6,10 @@
 import { renderTasks, renderTasksTable } from "../tasks/index.js";
 
 /**
- * Initialize filter buttons
+ * Initialize filter buttons and dropdowns
  */
 export function initFilters() {
+  // Initialize old filter buttons (for backward compatibility)
   const filterItems = document.querySelectorAll(".filter-btn");
 
   filterItems.forEach((item) => {
@@ -27,6 +28,36 @@ export function initFilters() {
       }
     });
   });
+
+  // Initialize dropdown filters
+  const statusFilter = document.getElementById("statusFilter");
+  const priorityFilter = document.getElementById("priorityFilter");
+
+  if (statusFilter) {
+    statusFilter.addEventListener("change", () => {
+      const activeSection = document.querySelector(".section-content.active");
+      if (activeSection) {
+        if (activeSection.id === "tareas-section") {
+          renderTasks();
+        } else if (activeSection.id === "tablas-section") {
+          renderTasksTable();
+        }
+      }
+    });
+  }
+
+  if (priorityFilter) {
+    priorityFilter.addEventListener("change", () => {
+      const activeSection = document.querySelector(".section-content.active");
+      if (activeSection) {
+        if (activeSection.id === "tareas-section") {
+          renderTasks();
+        } else if (activeSection.id === "tablas-section") {
+          renderTasksTable();
+        }
+      }
+    });
+  }
 }
 
 /**
