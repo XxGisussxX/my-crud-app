@@ -73,6 +73,8 @@ export function updateHeader(sectionId) {
   const searchBar = document.querySelector(".search-bar");
   const addActionBtn = document.getElementById("addBtn");
   const filterButtons = document.querySelectorAll(".filter-btn");
+  const statusFilter = document.getElementById("statusFilter");
+  const priorityFilter = document.getElementById("priorityFilter");
   const header = document.querySelector(".header");
 
   // Clear previous search
@@ -100,6 +102,9 @@ export function updateHeader(sectionId) {
       if (addActionBtn && addActionBtn.querySelector("span")) {
         addActionBtn.querySelector("span").textContent = "Añadir Tarea";
       }
+      // Show dropdowns for tasks
+      if (statusFilter) statusFilter.style.display = "inline-block";
+      if (priorityFilter) priorityFilter.style.display = "inline-block";
       break;
 
     case "calendario-section":
@@ -110,6 +115,9 @@ export function updateHeader(sectionId) {
         addActionBtn.querySelector("span").textContent = "Nuevo Evento";
       }
       filterButtons.forEach((btn) => (btn.style.display = "none"));
+      // Hide dropdowns in calendar
+      if (statusFilter) statusFilter.style.display = "none";
+      if (priorityFilter) priorityFilter.style.display = "none";
       break;
 
     case "notas-section":
@@ -120,6 +128,9 @@ export function updateHeader(sectionId) {
         addActionBtn.querySelector("span").textContent = "Nueva Nota";
       }
       filterButtons.forEach((btn) => (btn.style.display = "none"));
+      // Hide dropdowns in notes
+      if (statusFilter) statusFilter.style.display = "none";
+      if (priorityFilter) priorityFilter.style.display = "none";
       break;
 
     default:
