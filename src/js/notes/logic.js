@@ -20,7 +20,7 @@ export function createNote(noteData) {
     color: noteData.color || getDefaultColor(noteData.type),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    ...noteData.specificData,
+    specificData: noteData.specificData || {},
   };
   notes.push(newNote);
   saveNotes(notes);
@@ -39,7 +39,8 @@ export function updateNote(noteId, updateData) {
   notes[noteIndex] = {
     ...notes[noteIndex],
     ...updateData,
-    ...(updateData.specificData && { specificData: updateData.specificData }),
+    specificData:
+      updateData.specificData || notes[noteIndex].specificData || {},
     updatedAt: new Date().toISOString(),
   };
 
@@ -132,38 +133,62 @@ export function getDefaultColor(type) {
 
 /**
  * Get content size for note card layout
+ * Returns: xs (1 row) | small (2 rows) | sm-plus (3 rows) | medium (4 rows) | md-plus (5 rows) | large (6 rows)
  */
 export function getContentSize(type, content, specificData) {
   if (type === NOTE_TYPES.STICKY) {
     const length = content?.length || 0;
-    return length > 100 ? "medium" : "small";
+    if (length > 200) return "md-plus";
+    if (length > 150) return "medium";
+    if (length > 100) return "sm-plus";
+    if (length > 50) return "small";
+    return "xs";
   }
 
   if (type === NOTE_TYPES.STANDARD) {
     const contentLength = content?.length || 0;
-    const tagsCount = specificData?.tags?.length || 0;
-    if (contentLength > 150 || tagsCount > 3) return "medium";
-    if (contentLength > 80) return "small";
-    return "small";
+    if (contentLength > 250) return "md-plus";
+    if (contentLength > 180) return "medium";
+    if (contentLength > 120) return "sm-plus";
+    if (contentLength > 60) return "small";
+    return "xs";
   }
 
   if (type === NOTE_TYPES.IDEA) {
     const contentLength = content?.length || 0;
     const keyPointsCount = specificData?.keyPoints?.length || 0;
-    if (keyPointsCount > 4 || contentLength > 220) return "large";
-    if (keyPointsCount > 0 || contentLength > 120) return "medium";
-    return "small";
+    if (keyPointsCount > 7 || contentLength > 300) return "large";
+    if (keyPointsCount > 5 || contentLength > 250) return "md-plus";
+    if (keyPointsCount > 3 || contentLength > 180) return "medium";
+    if (keyPointsCount > 1 || contentLength > 100) return "sm-plus";
+    if (contentLength > 50) return "small";
+    return "xs";
   }
 
   if (type === NOTE_TYPES.CHECKLIST) {
-    return "medium";
+    const itemsCount = Array.isArray(specificData?.items)
+      ? specificData.items.length
+      : 0;
+    if (itemsCount >= 7) return "medium"; // 4 filas (10+ items)
+    if (itemsCount >= 5) return "sm-plus"; // 3 filas (6-9 items)
+    if (itemsCount >= 2) return "small"; // 2 filas (3-5 items)
+    if (itemsCount === 1) return "xs"; // 1 fila (1-2 items)
+    return "xs"; // checklist sin items usa la altura mínima
   }
 
   if (type === NOTE_TYPES.MEETING) {
-    return "medium";
+    const attendeesCount = specificData?.attendees?.length || 0;
+    const actionItemsCount = specificData?.actionItems?.length || 0;
+    const totalContent = attendeesCount + actionItemsCount;
+    if (totalContent > 12) return "large";
+    if (totalContent > 10) return "md-plus";
+    if (totalContent > 7) return "medium";
+    if (totalContent > 5) return "sm-plus";
+    if (totalContent > 2) return "small";
+    return "xs";
   }
 
-  return "small";
+  return "xs";
 }
 
 /**

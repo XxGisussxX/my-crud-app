@@ -2377,12 +2377,16 @@ body {
 }
 
 .checklist-progress {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 10px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
-  margin-top: 12px;
+  margin-top: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
   align-self: flex-start;
+  background: rgba(0, 0, 0, 0.05);
+  color: #6b7280;
+  text-align: center;
 }
 
 .checklist-items {

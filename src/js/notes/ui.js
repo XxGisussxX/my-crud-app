@@ -67,6 +67,8 @@ export function renderNoteCard(note) {
  */
 function renderStandardNote(note, formattedDate, size) {
   const tags = note.specificData?.tags || [];
+  const visibleTags = tags.slice(0, 3);
+  const hiddenTagsCount = tags.length - 3;
 
   return `
     <div class="note-card" style="background-color: ${
@@ -82,9 +84,14 @@ function renderStandardNote(note, formattedDate, size) {
       <div class="note-content"><p>${escapeHtml(note.content || "")}</p></div>
       <div class="note-footer">
         <div class="note-tags">
-          ${tags
+          ${visibleTags
             .map((tag) => `<span class="note-tag">${escapeHtml(tag)}</span>`)
             .join("")}
+          ${
+            hiddenTagsCount > 0
+              ? `<span class="note-tag" style="background: #e5e7eb; color: #6b7280;">+${hiddenTagsCount}</span>`
+              : ""
+          }
         </div>
         <div class="note-date">${formattedDate}</div>
       </div>
@@ -121,6 +128,16 @@ function renderChecklistNote(note, formattedDate, size) {
   const progress = getChecklistProgress(note.id);
   const progressPercentage = progress?.percentage || 0;
 
+  // Determinar cuántos items mostrar según el tamaño
+  const maxItems =
+    size === "medium"
+      ? 10 // Mostrar máximo 10 items
+      : size === "sm-plus"
+      ? 9 // 6-9 items
+      : size === "small"
+      ? 6 // 3-5 items
+      : 3; // xs (1-2 items)
+
   const itemsHtml = items
     .map(
       (item, index) => `
@@ -132,12 +149,12 @@ function renderChecklistNote(note, formattedDate, size) {
     </div>
   `
     )
-    .slice(0, 3)
+    .slice(0, maxItems)
     .join("");
 
   const moreItems =
-    items.length > 3
-      ? `<div class="more-items">+${items.length - 3} más...</div>`
+    items.length > maxItems
+      ? `<div class="more-items">+${items.length - maxItems} más...</div>`
       : "";
 
   return `
@@ -157,7 +174,7 @@ function renderChecklistNote(note, formattedDate, size) {
           ${moreItems}
         </div>
       </div>
-      <div class="checklist-progress" style="background: rgba(0,0,0,0.05); padding: 8px; border-radius: 8px; font-size: 12px; text-align: center; color: #6b7280;">
+      <div class="checklist-progress">
         ${progress?.completed}/${
     progress?.total
   } completados (${progressPercentage}%)
@@ -178,15 +195,28 @@ function renderIdeaNote(note, formattedDate, size) {
 
   const potentialBadge = `<div class="idea-potential ${potential}">${potential.toUpperCase()}</div>`;
 
+  const maxKeyPoints =
+    size === "large"
+      ? 7
+      : size === "md-plus"
+      ? 5
+      : size === "medium"
+      ? 4
+      : size === "sm-plus"
+      ? 3
+      : size === "small"
+      ? 2
+      : 1;
+
   const keyPointsHtml = keyPoints
-    .slice(0, 2)
+    .slice(0, maxKeyPoints)
     .map((point) => `<div class="key-point">${escapeHtml(point)}</div>`)
     .join("");
 
   const morePoints =
-    keyPoints.length > 2
+    keyPoints.length > maxKeyPoints
       ? `<div class="key-point" style="color: #9ca3af;">+${
-          keyPoints.length - 2
+          keyPoints.length - maxKeyPoints
         } más puntos...</div>`
       : "";
 
@@ -257,8 +287,20 @@ function renderMeetingNote(note, formattedDate, size) {
         }</div>`
       : "";
 
+  const maxActionItems =
+    size === "large"
+      ? 8
+      : size === "md-plus"
+      ? 6
+      : size === "medium"
+      ? 4
+      : size === "sm-plus"
+      ? 3
+      : size === "small"
+      ? 2
+      : 1;
   const actionItemsHtml = actionItems
-    .slice(0, 2)
+    .slice(0, maxActionItems)
     .map((item) => `<li>${escapeHtml(item)}</li>`)
     .join("");
 
@@ -297,8 +339,8 @@ function renderMeetingNote(note, formattedDate, size) {
               <ul class="action-items-list">
                 ${actionItemsHtml}
                 ${
-                  actionItems.length > 2
-                    ? `<li>+${actionItems.length - 2} más...</li>`
+                  actionItems.length > maxActionItems
+                    ? `<li>+${actionItems.length - maxActionItems} más...</li>`
                     : ""
                 }
               </ul>
