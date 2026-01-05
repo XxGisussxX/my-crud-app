@@ -197,16 +197,16 @@ function renderIdeaNote(note, formattedDate, size) {
 
   const maxKeyPoints =
     size === "large"
-      ? 7
+      ? 8
       : size === "md-plus"
-      ? 5
+      ? 6
       : size === "medium"
-      ? 4
+      ? 5
       : size === "sm-plus"
-      ? 3
+      ? 4
       : size === "small"
-      ? 2
-      : 1;
+      ? 3
+      : 2;
 
   const keyPointsHtml = keyPoints
     .slice(0, maxKeyPoints)
@@ -215,9 +215,9 @@ function renderIdeaNote(note, formattedDate, size) {
 
   const morePoints =
     keyPoints.length > maxKeyPoints
-      ? `<div class="key-point" style="color: #9ca3af;">+${
+      ? `<div class="key-point more-indicator">+${
           keyPoints.length - maxKeyPoints
-        } más puntos...</div>`
+        } más...</div>`
       : "";
 
   return `
@@ -248,8 +248,15 @@ function renderIdeaNote(note, formattedDate, size) {
  * Render meeting note card
  */
 function renderMeetingNote(note, formattedDate, size) {
-  const attendees = Array.isArray(note.specificData?.attendees)
-    ? note.specificData.attendees
+  // Normalize attendees to array
+  const attendeesRaw = note.specificData?.attendees;
+  const attendees = Array.isArray(attendeesRaw)
+    ? attendeesRaw
+    : typeof attendeesRaw === "string"
+    ? attendeesRaw
+        .split(/[\n,]/)
+        .map((a) => a.trim())
+        .filter((a) => a.length > 0)
     : [];
   const agenda = note.specificData?.agenda || "";
   const actionItems = Array.isArray(note.specificData?.actionItems)
@@ -366,9 +373,9 @@ function attachNoteEventListeners(container) {
     const noteId = noteCard.dataset.noteId;
     if (!noteId) return;
 
-    if (e.target.classList.contains("edit-note")) {
+    if (e.target.closest(".edit-note")) {
       editNote(noteId);
-    } else if (e.target.classList.contains("delete-note")) {
+    } else if (e.target.closest(".delete-note")) {
       deleteNoteWithConfirmation(noteId);
     } else if (e.target.closest(".checklist-item-preview")) {
       const itemPreview = e.target.closest(".checklist-item-preview");

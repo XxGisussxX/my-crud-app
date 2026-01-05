@@ -17,10 +17,10 @@ body {
   height: 100vh;
   overflow: hidden;
   transition: all var(--transition-normal);
-  max-width: var(--max-content-width);
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   width: 100%;
-  padding: 0 20px;
+  padding: 0 var(--spacing-lg) 0 var(--spacing-xl);
 }
 
 /* Section Content */

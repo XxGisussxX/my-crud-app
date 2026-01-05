@@ -6,16 +6,16 @@
   background: #ffffff;
   border: 1px solid var(--color-gray-200);
   border-radius: var(--radius-xl);
-  padding: 26px;
+  padding: 20px;
   transition: all var(--transition-normal);
   cursor: pointer;
   box-shadow: var(--shadow-sm);
-  min-width: 300px;
-  max-width: 320px;
+  min-width: 220px;
+  max-width: 280px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  min-height: 180px;
+  min-height: 160px;
 }
 
 .task-card:hover {
@@ -26,8 +26,8 @@
 .task-header {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .task-indicator {
@@ -60,10 +60,10 @@
 }
 
 .task-title {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 10px;
-  line-height: 1.4;
+  margin-bottom: 8px;
+  line-height: 1.3;
   color: var(--color-gray-800);
 }
 
@@ -80,7 +80,6 @@
 
 .task-card.completed {
   opacity: 0.75;
-  animation: slideDown 0.4s ease-out;
 }
 
 @keyframes slideDown {

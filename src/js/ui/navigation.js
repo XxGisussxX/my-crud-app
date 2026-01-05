@@ -18,9 +18,35 @@ import { clearSearchHighlights } from "./search.js";
  */
 export function initNavigation() {
   const navItems = document.querySelectorAll(".nav-item");
+  const dashboardSection = ["dashboard"];
+  const restrictedSections = ["calendario", "tablas"];
 
   navItems.forEach((item) => {
-    item.addEventListener("click", () => {
+    item.addEventListener("click", (e) => {
+      const section = item.dataset.section;
+      const isMobileTablet = window.innerWidth <= 779;
+      const isMobileSmall = window.innerWidth < 675;
+      const isDashboard = dashboardSection.includes(section);
+      const isRestricted = restrictedSections.includes(section);
+
+      // Check if trying to access dashboard on mobile/tablet
+      if (isMobileTablet && isDashboard) {
+        e.preventDefault();
+        e.stopPropagation();
+        showMobileRestrictionMessage();
+        return;
+      }
+
+      // Check if trying to access restricted sections on small mobile
+      if (isMobileSmall && isRestricted) {
+        e.preventDefault();
+        e.stopPropagation();
+        showMobileRestrictionMessage();
+        return;
+      }
+
+      e.stopPropagation(); // Prevent drawer from closing when clicking nav items
+
       // Clear active classes
       document
         .querySelectorAll(".nav-item")
@@ -63,6 +89,10 @@ export function initNavigation() {
       }
     });
   });
+
+  // Update restricted sections styling on load and resize
+  updateRestrictedSectionsStyle();
+  window.addEventListener("resize", updateRestrictedSectionsStyle);
 }
 
 /**
@@ -90,8 +120,19 @@ export function updateHeader(sectionId) {
 
   switch (sectionId) {
     case "dashboard-section":
-      // Hide header completely in dashboard
-      if (header) header.style.display = "none";
+      // Show header only on tablet/mobile so the hamburger stays available
+      if (header) {
+        header.style.display = window.innerWidth <= 1024 ? "flex" : "none";
+      }
+      if (searchBar) searchBar.style.display = "none";
+      // Hide add button on mobile/tablet for dashboard
+      if (addActionBtn) {
+        addActionBtn.style.display =
+          window.innerWidth <= 1024 ? "none" : "none";
+      }
+      filterButtons.forEach((btn) => (btn.style.display = "none"));
+      if (statusFilter) statusFilter.style.display = "none";
+      if (priorityFilter) priorityFilter.style.display = "none";
       break;
 
     case "tablas-section":
@@ -99,6 +140,7 @@ export function updateHeader(sectionId) {
       if (header) header.style.display = "flex";
       if (searchBar) searchBar.style.display = "flex";
       if (searchInput) searchInput.placeholder = "Buscar tareas...";
+      if (addActionBtn) addActionBtn.style.display = "inline-flex";
       if (addActionBtn && addActionBtn.querySelector("span")) {
         addActionBtn.querySelector("span").textContent = "Añadir Tarea";
       }
@@ -111,6 +153,7 @@ export function updateHeader(sectionId) {
       if (header) header.style.display = "flex";
       // Hide search bar in calendar (no search functionality)
       if (searchBar) searchBar.style.display = "none";
+      if (addActionBtn) addActionBtn.style.display = "inline-flex";
       if (addActionBtn && addActionBtn.querySelector("span")) {
         addActionBtn.querySelector("span").textContent = "Nuevo Evento";
       }
@@ -124,6 +167,7 @@ export function updateHeader(sectionId) {
       if (header) header.style.display = "flex";
       if (searchBar) searchBar.style.display = "flex";
       if (searchInput) searchInput.placeholder = "Buscar notas...";
+      if (addActionBtn) addActionBtn.style.display = "inline-flex";
       if (addActionBtn && addActionBtn.querySelector("span")) {
         addActionBtn.querySelector("span").textContent = "Nueva Nota";
       }
@@ -157,13 +201,19 @@ export function initDrawer() {
   }
 
   hamburgerBtn.addEventListener("click", toggleDrawer);
+
+  // Solo cerrar cuando se hace click FUERA del sidebar
   overlay.addEventListener("click", () => {
     sidebar.classList.remove("open");
     overlay.classList.remove("active");
     hamburgerBtn.classList.remove("active");
   });
 
-  // Close drawer on mobile when selecting navigation
+  // Evita que los clicks dentro del sidebar cierren el drawer
+  sidebar.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+
   const navItems = sidebar.querySelectorAll(".nav-item");
   navItems.forEach((item) => {
     item.addEventListener("click", () => {
@@ -175,5 +225,71 @@ export function initDrawer() {
         }, 150);
       }
     });
+  });
+}
+
+/**
+ * Show message when trying to access restricted sections on small mobile
+ */
+function showMobileRestrictionMessage() {
+  // Remove existing notification if present
+  const existingNotif = document.querySelector(
+    ".mobile-restriction-notification"
+  );
+  if (existingNotif) {
+    existingNotif.remove();
+  }
+
+  // Create notification element
+  const notification = document.createElement("div");
+  notification.className = "mobile-restriction-notification";
+  notification.innerHTML = `
+    <div class="notification-content">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="20" height="20">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <span>Esta sección está disponible en pantallas más grandes</span>
+    </div>
+  `;
+
+  document.body.appendChild(notification);
+
+  // Auto-remove after 3 seconds
+  setTimeout(() => {
+    notification.remove();
+  }, 2000);
+}
+
+/**
+ * Update styling for restricted sections on small mobile
+ */
+function updateRestrictedSectionsStyle() {
+  const dashboardSection = ["dashboard"];
+  const restrictedSections = ["calendario", "tablas"];
+  const isMobileTablet = window.innerWidth <= 779;
+  const isMobileSmall = window.innerWidth < 675;
+  const navItems = document.querySelectorAll(".nav-item");
+
+  navItems.forEach((item) => {
+    const section = item.dataset.section;
+    const isDashboard = dashboardSection.includes(section);
+    const isRestricted = restrictedSections.includes(section);
+
+    // Disable dashboard on mobile/tablet
+    if (isMobileTablet && isDashboard) {
+      item.style.opacity = "0.5";
+      item.style.cursor = "not-allowed";
+      item.style.pointerEvents = "auto";
+    }
+    // Disable calendario/tablas on small mobile
+    else if (isMobileSmall && isRestricted) {
+      item.style.opacity = "0.5";
+      item.style.cursor = "not-allowed";
+      item.style.pointerEvents = "auto";
+    } else {
+      item.style.opacity = "1";
+      item.style.cursor = "pointer";
+      item.style.pointerEvents = "auto";
+    }
   });
 }

@@ -83,14 +83,15 @@
   height: 12px;
   line-height: 12px;
   text-align: right;
-  width: 100%;
+  width: 100%;  display: flex;
+  align-items: center;
 }
 
 .heatmap-grid {
   display: grid;
   grid-auto-flow: column;
   grid-template-rows: repeat(7, 12px);
-  gap: 4px;
+  gap: 8.5px 5px !important;
   grid-column: 2;
   width: max-content;
 }

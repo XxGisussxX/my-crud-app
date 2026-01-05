@@ -6,6 +6,8 @@
 import { getTasks } from "../shared/storage.js";
 
 let calendarInstance = null;
+const CAL_MODAL_ID = "calendarEventModal";
+const CAL_CLOSE_BTNS = ["closeCalendarEvent", "cancelCalendarEvent"];
 
 /**
  * Get priority color
@@ -84,6 +86,18 @@ export function initCalendar() {
   });
 
   calendarInstance.render();
+
+  CAL_CLOSE_BTNS.forEach((id) => {
+    const btn = document.getElementById(id);
+    if (btn) btn.addEventListener("click", closeCalendarModal);
+  });
+
+  const modal = document.getElementById(CAL_MODAL_ID);
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeCalendarModal();
+    });
+  }
 }
 
 /**
@@ -105,16 +119,38 @@ export function updateCalendarEvents() {
  * Show event details (task)
  */
 function showEventDetails(event) {
-  const details = event.extendedProps;
-  const message = `
-📌 ${details.fullTitle}
-📅 ${event.start}
-⚠️  Prioridad: ${details.priority}
-✅ Estado: ${details.completed ? "Completado" : "Pendiente"}
-${details.description ? `\n📝 ${details.description}` : ""}
-  `.trim();
+  const details = event.extendedProps || {};
+  const modal = document.getElementById(CAL_MODAL_ID);
+  if (!modal) return;
 
-  alert(message);
+  const titleEl = document.getElementById("calEventTitle");
+  const dateEl = document.getElementById("calEventDate");
+  const priorityEl = document.getElementById("calEventPriority");
+  const statusEl = document.getElementById("calEventStatus");
+  const descEl = document.getElementById("calEventDescription");
+
+  if (titleEl) titleEl.textContent = details.fullTitle || event.title || "";
+  if (dateEl)
+    dateEl.textContent = event.start
+      ? new Date(event.start).toLocaleString("es-CO", {
+          dateStyle: "full",
+          timeStyle: "short",
+        })
+      : "";
+  if (priorityEl)
+    priorityEl.textContent = `Prioridad: ${details.priority || "-"}`;
+  if (statusEl)
+    statusEl.textContent = `Estado: ${
+      details.completed ? "Completado" : "Pendiente"
+    }`;
+  if (descEl) descEl.textContent = details.description || "Sin descripción";
+
+  modal.style.display = "flex";
+}
+
+function closeCalendarModal() {
+  const modal = document.getElementById(CAL_MODAL_ID);
+  if (modal) modal.style.display = "none";
 }
 
 /**

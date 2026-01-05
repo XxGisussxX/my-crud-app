@@ -10,10 +10,12 @@
   overflow-y: auto;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  scrollbar-width: none; /* Oculta barra en Firefox */
+  -ms-overflow-style: none; /* Oculta barra en IE/Edge heredado */
 }
 
 .notas-container::-webkit-scrollbar {
-  width: 8px;
+  display: none; /* Oculta barra en navegadores WebKit */
 }
 
 .notas-container::-webkit-scrollbar-track {
@@ -31,13 +33,12 @@
 }
 
 .notas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: var(--spacing-2xl);
+  /* Masonry-style columns */
+  display: block;
+  column-width: 320px;
+  column-gap: var(--spacing-2xl);
   width: 100%;
-  padding: 20px 60px;
-  grid-auto-flow: dense;
-  grid-auto-rows: 150px;
+  padding: 20px 16px 24px 0px;
 }
 
 /* Responsive: Tablet */
@@ -47,7 +48,8 @@
   }
 
   .notas-grid {
-    gap: var(--spacing-lg);
+    column-width: 280px;
+    column-gap: var(--spacing-xl);
   }
 }
 
@@ -58,8 +60,8 @@
   }
 
   .notas-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-lg);
+    column-width: 100%;
+    column-gap: var(--spacing-lg);
   }
 
   #notasGrid {
