@@ -107,17 +107,6 @@
           <span>Notas</span>
         </div>
       </nav>
-
-      <!-- <div class="stats">
-        <div class="stat-card">
-          <h3>Tasks Completed</h3>
-          <div class="number" id="tasksCompleted">0 / 0</div>
-        </div>
-        <div class="stat-card">
-          <h3>Active Tasks</h3>
-          <div class="number" id="activeTasks">0</div>
-        </div>
-      </div> -->
     </aside>
 
     <!-- Main Content -->
@@ -321,7 +310,24 @@
           </div>
         </div>
       </div>
-
+      <!-- Modal detalle de evento -->
+      <div id="calendarEventModal" class="modal">
+        <div class="modal-content calendar-event-modal">
+          <div class="modal-header">
+            <h2 id="calEventTitle"></h2>
+            <button class="close-modal" id="closeCalendarEvent">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p id="calEventDate"></p>
+            <p id="calEventPriority"></p>
+            <p id="calEventStatus"></p>
+            <p id="calEventDescription"></p>
+          </div>
+          <div class="modal-footer">
+            <button class="cancel-btn" id="cancelCalendarEvent">Cerrar</button>
+          </div>
+        </div>
+      </div>
       <!-- Modales específicos para cada tipo de nota -->
 
       <!-- Modal Standard Note -->
@@ -615,7 +621,7 @@
       <div class="section-content" id="dashboard-section">
         <div class="charts-container">
           <!-- Tarjetas de Estadísticas -->
-          <div class="chart-wrapper stat-wrapper">
+          <div class="chart-wrapper stat-wrapper stat-card">
             <div class="stat-icon success">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path
@@ -636,7 +642,7 @@
             </div>
           </div>
 
-          <div class="chart-wrapper stat-wrapper">
+          <div class="chart-wrapper stat-wrapper stat-card">
             <div class="stat-icon info">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -655,7 +661,7 @@
             </div>
           </div>
 
-          <div class="chart-wrapper stat-wrapper">
+          <div class="chart-wrapper stat-wrapper stat-card">
             <div class="stat-icon warning">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path
@@ -675,15 +681,15 @@
               </div>
             </div>
           </div>
-          <div class="chart-wrapper">
+          <div class="chart-wrapper line-chart">
             <h3 class="chart-title">Evolución de Tareas</h3>
             <canvas id="lineChart"></canvas>
           </div>
-          <div class="chart-wrapper">
+          <div class="chart-wrapper donut-chart">
             <h3 class="chart-title">Distribución por Prioridad</h3>
             <canvas id="donutChart"></canvas>
           </div>
-          <div class="chart-wrapper heatmap-wrapper">
+          <div class="chart-wrapper heatmap-chart">
             <div id="heatmap-container"></div>
           </div>
         </div>
