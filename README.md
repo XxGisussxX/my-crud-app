@@ -14,7 +14,7 @@
 
 ### 🎯 Vista de Tareas (Cards Interactivas)
 
-![Vista Tareas](![alt text](image.png))
+![Vista Tareas](./public/assets/images/image.png)
 
 _Tarjetas dinámicas con información completa de cada tarea: título, descripción detallada, fecha de vencimiento, sistema de prioridades visual (Alta/Media/Baja) y acciones rápidas. Filtros inteligentes por estado y prioridad._
 
@@ -30,7 +30,7 @@ _Tarjetas dinámicas con información completa de cada tarea: título, descripci
 
 ### 📊 Vista de Tablas (Lista Completa)
 
-![Vista Tablas](![alt text](image-1.png))
+![Vista Tablas](./public/assets/images/image-1.png)
 
 _Vista empresarial tipo spreadsheet con todas las tareas organizadas en columnas: Título, Descripción, Estado, Prioridad y Fecha. Perfecta para gestionar grandes volúmenes de información y exportar reportes._
 
@@ -46,7 +46,7 @@ _Vista empresarial tipo spreadsheet con todas las tareas organizadas en columnas
 
 ### 📅 Calendario Inteligente
 
-![Calendario](![alt text](image-2.png))
+![Calendario](./public/assets/images/image-2.png)
 
 _Calendario mensual totalmente funcional con visualización de tareas por fecha. Navegación entre meses, vista de semana/mes/día, y creación rápida de eventos._
 
@@ -62,7 +62,7 @@ _Calendario mensual totalmente funcional con visualización de tareas por fecha.
 
 ### 📈 Dashboard Analítico
 
-![Dashboard](![alt text](image-3.png))
+![Dashboard](./public/assets/images/image-3.png)
 
 _Panel de control empresarial con métricas en tiempo real, gráficos interactivos y KPIs de productividad._
 
@@ -82,7 +82,7 @@ _Panel de control empresarial con métricas en tiempo real, gráficos interactiv
 
 ### 📝 Sistema de Notas Colaborativas
 
-![Notas](![alt text](image-4.png))
+![Notas](./public/assets/images/image-4.png)
 
 _Nuevo módulo para gestión de notas de proyectos con colaboradores, agendas y acciones pendientes._
 
