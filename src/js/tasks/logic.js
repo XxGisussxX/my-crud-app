@@ -48,12 +48,25 @@ export function toggleTask(id) {
   const tasks = getTasks();
   const updated = tasks.map((t) => {
     if (t.id === id) {
-      const isCompleted = !t.completed;
-      return {
-        ...t,
-        completed: isCompleted,
-        completedAt: isCompleted ? formatDateISO(new Date()) : null,
-      };
+      if (!t.completed) {
+        // Marcando como completada: guardar prioridad anterior y cambiar a "done"
+        return {
+          ...t,
+          completed: true,
+          completedAt: formatDateISO(new Date()),
+          previousPriority: t.priority,
+          priority: "done",
+        };
+      } else {
+        // Desmarcando: volver a la prioridad anterior
+        return {
+          ...t,
+          completed: false,
+          completedAt: null,
+          priority: t.previousPriority || t.priority === "done" ? "medium" : t.priority,
+          previousPriority: undefined,
+        };
+      }
     }
     return t;
   });
